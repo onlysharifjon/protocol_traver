@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Reveal from "@/components/Reveal";
 import { getSettings, getTimeline, getTeam, getPartners } from "@/lib/queries";
+import { getLang } from "@/lib/locale";
+import { t } from "@/lib/i18n";
 
 export const metadata = {
   title: "Our Story — Protocol",
@@ -8,10 +10,12 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default function AboutPage() {
-  const s = getSettings("about");
-  const timeline = getTimeline();
-  const team = getTeam();
-  const partners = getPartners();
+  const lang = getLang();
+  const ui = t(lang);
+  const s = getSettings("about", lang);
+  const timeline = getTimeline(lang);
+  const team = getTeam(lang);
+  const partners = getPartners(lang);
 
   return (
     <>
@@ -56,7 +60,7 @@ export default function AboutPage() {
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink to-transparent p-6">
                 <p className="font-sans text-[8px] uppercase tracking-[0.3em] text-gold">
-                  Founder &amp; Director
+                  {ui.founderDirector}
                 </p>
                 <p className="mt-2 font-serif text-xl text-cream">
                   {s.about_founder_signature}

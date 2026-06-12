@@ -7,14 +7,18 @@ import {
   getHomeFeatures,
   getHomeStats,
 } from "@/lib/queries";
+import { getLang } from "@/lib/locale";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
 export default function HomePage() {
-  const s = getSettings("home");
-  const featuredTours = getFeaturedTours();
-  const homeFeatures = getHomeFeatures();
-  const homeStats = getHomeStats();
+  const lang = getLang();
+  const ui = t(lang);
+  const s = getSettings("home", lang);
+  const featuredTours = getFeaturedTours(lang);
+  const homeFeatures = getHomeFeatures(lang);
+  const homeStats = getHomeStats(lang);
 
   return (
     <>
@@ -51,7 +55,7 @@ export default function HomePage() {
 
         <div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 text-center">
           <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-cream/60">
-            Scroll
+            {ui.scroll}
           </span>
           <div className="mx-auto mt-3 h-10 w-px bg-gradient-to-b from-gold to-transparent" />
         </div>

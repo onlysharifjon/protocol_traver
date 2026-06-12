@@ -1,19 +1,24 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { getAdminLang } from "@/lib/locale";
 import { RESOURCES, SETTINGS_GROUPS } from "../config";
 
 export const dynamic = "force-dynamic";
 
-function count(table: string): number {
+function count(table: string, lang: string): number {
   try {
-    return (db.prepare(`SELECT COUNT(*) AS n FROM ${table}`).get() as { n: number })
-      .n;
+    return (
+      db
+        .prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE lang = ?`)
+        .get(lang) as { n: number }
+    ).n;
   } catch {
     return 0;
   }
 }
 
 export default function DashboardHome() {
+  const adminLang = getAdminLang();
   return (
     <div>
       <h1 className="font-serif text-4xl font-light text-cream">Dashboard</h1>
@@ -50,7 +55,7 @@ export default function DashboardHome() {
               {r.titlePlural}
             </span>
             <span className="font-sans text-xs text-muted-600">
-              {count(r.table)}
+              {count(r.table, adminLang)}
             </span>
           </Link>
         ))}

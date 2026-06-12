@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import { getSettings, getDestinations } from "@/lib/queries";
+import { getLang } from "@/lib/locale";
+import { t } from "@/lib/i18n";
 
 export const metadata = {
   title: "Destinations — Protocol",
@@ -9,6 +11,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 type Destination = ReturnType<typeof getDestinations>[number];
+type UI = ReturnType<typeof t>;
 
 const aspectBySpan: Record<string, string> = {
   tall: "aspect-[7/8]",
@@ -16,7 +19,7 @@ const aspectBySpan: Record<string, string> = {
   short: "aspect-[5/4]",
 };
 
-function DestinationCard({ d }: { d: Destination }) {
+function DestinationCard({ d, ui }: { d: Destination; ui: UI }) {
   return (
     <Link href="/tours" className="group relative block overflow-hidden">
       <div className={`relative w-full ${aspectBySpan[d.span] ?? "aspect-[4/5]"}`}>
@@ -35,7 +38,7 @@ function DestinationCard({ d }: { d: Destination }) {
 
       <div className="absolute inset-x-0 bottom-0 p-7">
         <p className="font-sans text-[9px] uppercase tracking-[0.3em] text-gold/70">
-          Uzbekistan
+          {ui.countryLabel}
         </p>
         <h3 className="mt-3 font-serif text-4xl font-light text-cream md:text-5xl">
           {d.name}
@@ -44,7 +47,7 @@ function DestinationCard({ d }: { d: Destination }) {
           {d.blurb}
         </p>
         <span className="link-underline mt-5 inline-block font-sans text-[9px] uppercase tracking-[0.3em] text-gold opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-          Discover →
+          {ui.discover}
         </span>
       </div>
     </Link>
@@ -52,8 +55,10 @@ function DestinationCard({ d }: { d: Destination }) {
 }
 
 export default function DestinationsPage() {
-  const s = getSettings("destinations");
-  const destinations = getDestinations();
+  const lang = getLang();
+  const ui = t(lang);
+  const s = getSettings("destinations", lang);
+  const destinations = getDestinations(lang);
   const left = destinations.filter((_, i) => i % 2 === 0);
   const right = destinations.filter((_, i) => i % 2 === 1);
 
@@ -83,7 +88,7 @@ export default function DestinationsPage() {
           <div className="flex flex-col gap-6 md:hidden">
             {destinations.map((d) => (
               <Reveal key={d.id}>
-                <DestinationCard d={d} />
+                <DestinationCard d={d} ui={ui} />
               </Reveal>
             ))}
           </div>
@@ -93,14 +98,14 @@ export default function DestinationsPage() {
             <div className="flex flex-col gap-6">
               {left.map((d, i) => (
                 <Reveal delay={i * 100} key={d.id}>
-                  <DestinationCard d={d} />
+                  <DestinationCard d={d} ui={ui} />
                 </Reveal>
               ))}
             </div>
             <div className="flex flex-col gap-6 md:pt-16">
               {right.map((d, i) => (
                 <Reveal delay={i * 100} key={d.id}>
-                  <DestinationCard d={d} />
+                  <DestinationCard d={d} ui={ui} />
                 </Reveal>
               ))}
             </div>

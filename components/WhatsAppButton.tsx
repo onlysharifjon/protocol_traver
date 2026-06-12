@@ -4,7 +4,7 @@ export default function WhatsAppButton({ whatsapp }: { whatsapp: string }) {
       href={`https://wa.me/${whatsapp}`}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Chat on WhatsApp"
+      aria-label="Написать в WhatsApp"
       className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-whatsapp shadow-lg shadow-black/40 transition-transform duration-300 hover:scale-110"
     >
       <svg viewBox="0 0 24 24" className="h-6 w-6 fill-white" aria-hidden="true">

@@ -1,7 +1,9 @@
 import Link from "next/link";
+import LangSwitcher from "./LangSwitcher";
+import { t } from "@/lib/i18n";
+import type { Locale } from "@/lib/data";
 
 const socials = ["Instagram", "Facebook", "Tripadvisor"];
-const langs = ["EN", "RU"];
 
 type Column = { title: string; links: string[] };
 type Contact = { email: string; phone: string; address: string };
@@ -11,11 +13,14 @@ export default function Footer({
   columns,
   contact,
   brand,
+  lang,
 }: {
   columns: Column[];
   contact: Contact;
   brand: Brand;
+  lang: Locale;
 }) {
+  const ui = t(lang);
   return (
     <footer id="contact" className="border-t border-white/5 bg-ink-900">
       <div className="container-x py-20">
@@ -29,8 +34,7 @@ export default function Footer({
               {brand.tagline}
             </div>
             <p className="mt-6 max-w-[280px] font-sans text-xs leading-[1.8] text-muted-600">
-              Uzbekistan&apos;s premier private tour operator. Tashkent,
-              established 2008.
+              {ui.footerTagline}
             </p>
             <div className="mt-6 space-y-2 font-sans text-[11px] tracking-[0.05em] text-muted-400">
               <a href={`mailto:${contact.email}`} className="block hover:text-gold">
@@ -68,7 +72,7 @@ export default function Footer({
         {/* Bottom bar */}
         <div className="mt-16 flex flex-col items-start justify-between gap-6 border-t border-white/5 pt-8 md:flex-row md:items-center">
           <p className="font-sans text-[10px] tracking-[0.1em] text-muted-800">
-            © 2024 Protocol Travel Services LLC. All rights reserved.
+            © 2024 Protocol Travel Services LLC. {ui.footerRights}
           </p>
 
           <div className="flex items-center gap-6">
@@ -83,22 +87,7 @@ export default function Footer({
                 </Link>
               ))}
             </div>
-            <div className="flex items-center gap-2">
-              {langs.map((l, i) => (
-                <span key={l} className="flex items-center gap-2">
-                  <button
-                    className={`font-sans text-[9px] tracking-[0.18em] hover:text-gold ${
-                      i === 0 ? "text-gold" : "text-muted-800"
-                    }`}
-                  >
-                    {l}
-                  </button>
-                  {i < langs.length - 1 && (
-                    <span className="text-muted-500">|</span>
-                  )}
-                </span>
-              ))}
-            </div>
+            <LangSwitcher current={lang} />
           </div>
         </div>
       </div>

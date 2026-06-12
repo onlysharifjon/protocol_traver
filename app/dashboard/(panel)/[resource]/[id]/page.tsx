@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { getAdminLang } from "@/lib/locale";
 import { getResource } from "../../../config";
 import { saveResource } from "../../../actions";
 import ResourceForm from "@/components/dashboard/ResourceForm";
@@ -14,6 +15,7 @@ export default function EditResourcePage({
   const res = getResource(params.resource);
   if (!res) notFound();
 
+  const lang = getAdminLang();
   const isNew = params.id === "new";
   let values: Record<string, unknown> = {};
 
@@ -24,22 +26,24 @@ export default function EditResourcePage({
     if (!row) notFound();
     values = row;
   } else {
-    // sensible default ordering for new rows
+    // sensible default ordering for new rows (within the current language)
     const max = db
-      .prepare(`SELECT COALESCE(MAX(position), -1) AS m FROM ${res.table}`)
-      .get() as { m: number };
+      .prepare(`SELECT COALESCE(MAX(position), -1) AS m FROM ${res.table} WHERE lang = ?`)
+      .get(lang) as { m: number };
     values = { position: max.m + 1 };
   }
 
-  // Load options for ref fields
+  // Load options for ref fields, scoped to the current language so e.g. an EN
+  // document is linked to an EN document group.
+  const refLang = isNew ? lang : (values.lang as string) ?? lang;
   const refOptions: Record<string, { id: number; label: string }[]> = {};
   for (const f of res.fields) {
     if (f.type === "ref" && f.refTable && f.refLabel) {
       refOptions[f.name] = db
         .prepare(
-          `SELECT id, ${f.refLabel} AS label FROM ${f.refTable} ORDER BY position, id`
+          `SELECT id, ${f.refLabel} AS label FROM ${f.refTable} WHERE lang = ? ORDER BY position, id`
         )
-        .all() as { id: number; label: string }[];
+        .all(refLang) as { id: number; label: string }[];
     }
   }
 

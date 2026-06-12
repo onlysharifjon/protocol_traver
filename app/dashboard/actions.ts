@@ -12,6 +12,7 @@ import {
   verifyCredentials,
   verifySessionToken,
 } from "@/lib/auth";
+import { getAdminLang } from "@/lib/locale";
 import { getResource } from "./config";
 
 const PUBLIC_PATHS = ["/", "/tours", "/destinations", "/about", "/documents"];
@@ -99,10 +100,13 @@ export async function saveResource(
   }
 
   if (idRaw === "new") {
-    const placeholders = cols.map(() => "?").join(", ");
+    // New rows belong to the language currently selected in the dashboard.
+    const insCols = [...cols, "lang"];
+    const insValues = [...values, getAdminLang()];
+    const placeholders = insCols.map(() => "?").join(", ");
     db.prepare(
-      `INSERT INTO ${res.table} (${cols.join(", ")}) VALUES (${placeholders})`
-    ).run(...values);
+      `INSERT INTO ${res.table} (${insCols.join(", ")}) VALUES (${placeholders})`
+    ).run(...insValues);
   } else {
     const setClause = cols.map((c) => `${c} = ?`).join(", ");
     db.prepare(`UPDATE ${res.table} SET ${setClause} WHERE id = ?`).run(
@@ -129,15 +133,18 @@ export async function deleteResource(slug: string, id: number) {
 // ---------- Settings ----------
 export async function saveSettings(group: string, formData: FormData) {
   await requireAuth();
-  // Only update keys that already exist in this group (whitelist).
+  const lang = getAdminLang();
+  // Only update keys that already exist in this group/language (whitelist).
   const existing = db
-    .prepare("SELECT key FROM settings WHERE grp = ?")
-    .all(group) as { key: string }[];
-  const upd = db.prepare("UPDATE settings SET value = ? WHERE key = ?");
+    .prepare("SELECT key FROM settings WHERE grp = ? AND lang = ?")
+    .all(group, lang) as { key: string }[];
+  const upd = db.prepare(
+    "UPDATE settings SET value = ? WHERE key = ? AND lang = ?"
+  );
   const tx = db.transaction(() => {
     for (const { key } of existing) {
       if (formData.has(key)) {
-        upd.run(String(formData.get(key) ?? ""), key);
+        upd.run(String(formData.get(key) ?? ""), key, lang);
       }
     }
   });

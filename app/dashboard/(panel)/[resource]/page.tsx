@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { getAdminLang } from "@/lib/locale";
 import { getResource } from "../../config";
 import { deleteResource } from "../../actions";
 
@@ -14,9 +15,10 @@ export default function ResourceListPage({
   const res = getResource(params.resource);
   if (!res) notFound();
 
+  const lang = getAdminLang();
   const rows = db
-    .prepare(`SELECT * FROM ${res.table} ORDER BY position, id`)
-    .all() as Record<string, unknown>[];
+    .prepare(`SELECT * FROM ${res.table} WHERE lang = ? ORDER BY position, id`)
+    .all(lang) as Record<string, unknown>[];
 
   return (
     <div>

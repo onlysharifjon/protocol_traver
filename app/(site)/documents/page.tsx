@@ -1,5 +1,7 @@
 import Reveal from "@/components/Reveal";
 import { getSettings, getDocumentGroups } from "@/lib/queries";
+import { getLang } from "@/lib/locale";
+import { t } from "@/lib/i18n";
 
 export const metadata = {
   title: "Licenses & Certifications — Protocol",
@@ -21,8 +23,10 @@ function TypeBadge({ type }: { type: string }) {
 }
 
 export default function DocumentsPage() {
-  const s = getSettings("documents");
-  const documentGroups = getDocumentGroups();
+  const lang = getLang();
+  const ui = t(lang);
+  const s = getSettings("documents", lang);
+  const documentGroups = getDocumentGroups(lang);
   const summary = documentGroups.map((g) => ({
     value: String(g.docs.length),
     label: g.title,
@@ -110,10 +114,10 @@ export default function DocumentsPage() {
 
                     <div className="flex shrink-0 items-center gap-6">
                       <button className="font-sans text-[9px] uppercase tracking-[0.25em] text-muted-700 transition-colors hover:text-cream">
-                        View
+                        {ui.docView}
                       </button>
                       <button className="flex items-center gap-2 border border-gold/30 px-5 py-3 font-sans text-[9px] uppercase tracking-[0.25em] text-gold transition-colors hover:bg-gold hover:text-ink">
-                        ↓ Download
+                        ↓ {ui.docDownload}
                       </button>
                     </div>
                   </div>

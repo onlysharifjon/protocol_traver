@@ -2,21 +2,25 @@ import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import { getSettings, getTours } from "@/lib/queries";
+import { getLang } from "@/lib/locale";
+import { t } from "@/lib/i18n";
 
 export const metadata = {
-  title: "Our Tours & Expeditions — Protocol",
+  title: "Tours & Expeditions — Protocol",
 };
 export const dynamic = "force-dynamic";
 
-const filters = [
-  { label: "Destination", value: "All Destinations" },
-  { label: "Duration", value: "Any Duration" },
-  { label: "Tour Type", value: "All Types" },
-];
-
 export default function ToursPage() {
-  const s = getSettings("tours");
-  const tours = getTours();
+  const lang = getLang();
+  const ui = t(lang);
+  const s = getSettings("tours", lang);
+  const tours = getTours(lang);
+
+  const filters = [
+    { label: ui.filterDestination, value: ui.allDestinations },
+    { label: ui.filterDuration, value: ui.anyDuration },
+    { label: ui.filterTourType, value: ui.allTypes },
+  ];
 
   return (
     <>
@@ -58,7 +62,7 @@ export default function ToursPage() {
               ))}
             </div>
             <p className="font-serif text-lg text-muted-400">
-              {tours.length} journeys
+              {tours.length} {ui.journeys}
             </p>
           </Reveal>
         </div>
@@ -102,7 +106,7 @@ export default function ToursPage() {
                     {tour.price}
                   </span>
                   <span className="link-underline font-sans text-[9px] uppercase tracking-[0.25em] text-muted-400 group-hover:text-gold">
-                    View Tour →
+                    {ui.viewTour}
                   </span>
                 </div>
               </Link>

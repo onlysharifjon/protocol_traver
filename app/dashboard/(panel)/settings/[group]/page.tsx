@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getSettings } from "@/lib/queries";
+import { getAdminLang } from "@/lib/locale";
 import { SETTINGS_GROUPS, prettifyKey } from "../../../config";
 import { saveSettings } from "../../../actions";
 
@@ -13,7 +14,7 @@ export default function SettingsGroupPage({
   const meta = SETTINGS_GROUPS.find((g) => g.slug === params.group);
   if (!meta) notFound();
 
-  const settings = getSettings(params.group);
+  const settings = getSettings(params.group, getAdminLang());
   const keys = Object.keys(settings).sort();
   const action = saveSettings.bind(null, params.group);
 

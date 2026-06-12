@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-
-const langs = ["EN", "RU"];
+import LangSwitcher from "./LangSwitcher";
 
 type NavItem = { label: string; href: string };
 type Brand = { name: string; tagline: string };
@@ -12,9 +11,11 @@ type Brand = { name: string; tagline: string };
 export default function Header({
   nav,
   brand,
+  lang,
 }: {
   nav: NavItem[];
   brand: Brand;
+  lang: string;
 }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -73,20 +74,7 @@ export default function Header({
         {/* Language + mobile toggle */}
         <div className="flex items-center gap-4">
           <div className="hidden items-center gap-2 sm:flex">
-            {langs.map((l, i) => (
-              <span key={l} className="flex items-center gap-2">
-                <button
-                  className={`font-sans text-[10px] tracking-[0.15em] transition-colors hover:text-gold ${
-                    i === 0 ? "text-gold" : "text-muted-400"
-                  }`}
-                >
-                  {l}
-                </button>
-                {i < langs.length - 1 && (
-                  <span className="text-muted-800">|</span>
-                )}
-              </span>
-            ))}
+            <LangSwitcher current={lang} />
           </div>
 
           <button

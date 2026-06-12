@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Sidebar from "@/components/dashboard/Sidebar";
+import LangSwitcher from "@/components/LangSwitcher";
+import { getAdminLang } from "@/lib/locale";
 import { logout } from "../actions";
 
 export const metadata = { title: "Dashboard — Protocol" };
@@ -10,6 +12,7 @@ export default function PanelLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const adminLang = getAdminLang();
   return (
     <div className="flex min-h-screen bg-ink text-cream">
       {/* Sidebar */}
@@ -21,6 +24,12 @@ export default function PanelLayout({
             </div>
             <div className="mt-1 font-sans text-[8px] uppercase tracking-[0.3em] text-gold">
               Admin Dashboard
+            </div>
+            <div className="mt-4 flex items-center justify-between border border-white/10 bg-ink px-3 py-2">
+              <span className="font-sans text-[8px] uppercase tracking-[0.25em] text-muted-600">
+                Editing
+              </span>
+              <LangSwitcher current={adminLang} cookieName="admin_lang" />
             </div>
           </div>
           <Sidebar />
@@ -46,11 +55,14 @@ export default function PanelLayout({
         {/* Mobile top bar */}
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 md:hidden">
           <span className="font-serif tracking-wide">PROTOCOL Admin</span>
-          <form action={logout}>
-            <button className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-400">
-              Log out
-            </button>
-          </form>
+          <div className="flex items-center gap-4">
+            <LangSwitcher current={adminLang} cookieName="admin_lang" />
+            <form action={logout}>
+              <button className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-400">
+                Log out
+              </button>
+            </form>
+          </div>
         </div>
         <main className="mx-auto max-w-4xl px-6 py-10">{children}</main>
       </div>
