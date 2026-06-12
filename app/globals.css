@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-cormorant: "Cormorant Garamond", serif;
+  --font-montserrat: "Montserrat", sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ink text-cream font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: rgba(201, 168, 76, 0.25);
+    color: #f0ead6;
+  }
+}
+
+@layer components {
+  /* Centered content column matching the 1200px design grid */
+  .container-x {
+    @apply mx-auto w-full max-w-container px-6 md:px-10;
+  }
+
+  /* Small uppercase gold eyebrow label used across sections */
+  .eyebrow {
+    @apply font-sans text-[10px] uppercase tracking-[0.35em] text-gold;
+  }
+
+  /* Thin pill / ghost button */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center border border-gold/40 px-9 py-4
+      font-sans text-[11px] uppercase tracking-[0.3em] text-gold
+      transition-colors duration-500 hover:bg-gold hover:text-ink;
+  }
+
+  .link-underline {
+    @apply relative after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0
+      after:bg-gold after:transition-all after:duration-500 hover:after:w-full;
+  }
+}
+
+/* Custom thin scrollbar to match the dark theme */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #222;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c9a84c;
+}

@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Test-Path *)",
+      "PowerShell(claude mcp *)",
+      "PowerShell(winget *)",
+      "PowerShell($figma = Get-ChildItem \"$env:LOCALAPPDATA\\\\Figma\" -Filter \"Figma.exe\" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1; if \\($figma\\) { Write-Output \"Topildi: $\\($figma.FullName\\)\" } else { Write-Output \"Figma.exe topilmadi, qidiramiz...\" })",
+      "PowerShell(Start-Process \"C:\\\\Users\\\\awday\\\\AppData\\\\Local\\\\Figma\\\\Figma.exe\"; Write-Output \"Figma ishga tushirildi\")",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://127.0.0.1:3845/mcp\" -Method GET -TimeoutSec 5 -ErrorAction Stop; Write-Output \"STATUS: $\\($r.StatusCode\\)\"; Write-Output $r.Content } catch { Write-Output \"Ulanish yo'q yoki server yoqilmagan:\"; Write-Output $_.Exception.Message })",
+      "Bash(python3 *)",
+      "PowerShell($d = Get-Content \"$env:USERPROFILE\\\\.claude.json\" -Raw | ConvertFrom-Json; $proj = $d.projects.\"C:\\\\Users\\\\awday\\\\Desktop\\\\travel\"; Write-Output \"Project keys:\"; $proj.PSObject.Properties.Name; Write-Output \"---mcpServers---\"; $proj.mcpServers | ConvertTo-Json -Depth 5)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\awday\\\\Desktop\\\\travel\\\\figma_refs\" | Select-Object Name, @{N='KB';E={[math]::Round\\($_.Length/1KB\\)}})",
+      "Bash(node parse.js home.json)",
+      "PowerShell(npm *)",
+      "Bash(npx --yes create-next-app@latest . --typescript --tailwind --app --no-src-dir --no-eslint --import-alias \"@/*\" --use-npm --yes)",
+      "Read(//c/c/Users/awday/Desktop/travel/**)",
+      "Read(//c/c/Users/awday/Desktop/**)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(PORT=3100 npm run start)",
+      "Bash(PORT=3200 npm run dev)"
+    ]
+  }
+}
