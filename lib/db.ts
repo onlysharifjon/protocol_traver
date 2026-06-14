@@ -14,9 +14,51 @@ function createConnection(): Database.Database {
   db.pragma("journal_mode = WAL");
   db.pragma("busy_timeout = 8000");
   db.pragma("foreign_keys = ON");
+  migrateLegacySchema(db);
   initSchema(db);
   seedIfEmpty(db);
   return db;
+}
+
+// Every content table created by initSchema. Kept here so the legacy migration
+// can rebuild them.
+const CONTENT_TABLES = [
+  "settings", "nav_items", "featured_tours", "tours", "destinations",
+  "home_features", "home_stats", "timeline", "team", "partners",
+  "doc_groups", "documents", "footer_columns", "footer_links",
+];
+
+function columnExists(db: Database.Database, table: string, col: string) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[];
+  return cols.some((c) => c.name === col);
+}
+
+// --- Legacy migration ---
+// The pre-i18n schema had no `lang` column. CREATE TABLE IF NOT EXISTS never
+// alters an existing table, so an old DB would throw "no such column: lang" on
+// every query. Since all content is reseeded from code, we detect the old
+// schema (settings table without a `lang` column), snapshot the file, and drop
+// the stale tables so initSchema + seedIfEmpty can rebuild them for both langs.
+function migrateLegacySchema(db: Database.Database) {
+  const hasSettings = db
+    .prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='settings'")
+    .get();
+  if (!hasSettings) return; // fresh DB — nothing to migrate
+  if (columnExists(db, "settings", "lang")) return; // already current schema
+
+  console.warn("[db] legacy pre-i18n schema detected — rebuilding tables");
+  db.pragma("wal_checkpoint(TRUNCATE)");
+  try {
+    fs.copyFileSync(DB_PATH, `${DB_PATH}.legacy-${Date.now()}.bak`);
+  } catch (err) {
+    console.warn("[db] could not back up legacy DB:", err);
+  }
+
+  db.pragma("foreign_keys = OFF");
+  db.transaction(() => {
+    for (const t of CONTENT_TABLES) db.exec(`DROP TABLE IF EXISTS ${t}`);
+  })();
+  db.pragma("foreign_keys = ON");
 }
 
 // --- Schema ---
