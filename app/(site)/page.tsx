@@ -210,7 +210,7 @@ export default function HomePage() {
       {/* ---------------- CTA ---------------- */}
       <section className="relative overflow-hidden py-36 md:py-44">
         <Image
-          src="/images/cta-home.jpg"
+          src="/images/tour-silkroad.jpg"
           alt="Ancient archway interior"
           fill
           className="object-cover"
