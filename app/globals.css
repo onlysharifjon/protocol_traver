@@ -60,3 +60,60 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #c9a84c;
 }
+
+/* ============================================================
+   Admin dashboard — switchable LIGHT theme.
+   Everything is scoped under .admin-root[data-admin-theme="light"]
+   so the public site (intentionally dark) is never affected. The
+   selectors simply remap the dark utility classes the admin already
+   uses, so individual pages need no changes.
+   ============================================================ */
+.admin-root[data-admin-theme="light"] {
+  --al-bg: #f4f1e8; /* page background        (bg-ink)      */
+  --al-panel: #eceadd; /* sidebar               (bg-ink-900)  */
+  --al-surface: #ffffff; /* cards / inputs       (bg-ink-600)  */
+  --al-text: #1c1a14; /* primary text          (text-cream)  */
+  --al-muted-1: #6b675e; /*                      (text-muted-400) */
+  --al-muted-2: #56524a; /*                      (text-muted-600) */
+  --al-muted-3: #45413a; /*                      (text-muted-700) */
+  --al-gold: #9a7c2c; /* darker gold for contrast (text-gold) */
+  --al-border: rgba(0, 0, 0, 0.12);
+  --al-border-soft: rgba(0, 0, 0, 0.07);
+  --al-tint: rgba(0, 0, 0, 0.04);
+
+  background-color: var(--al-bg);
+  color: var(--al-text);
+}
+
+/* Backgrounds */
+.admin-root[data-admin-theme="light"] .bg-ink { background-color: var(--al-bg); }
+.admin-root[data-admin-theme="light"] .bg-ink-900 { background-color: var(--al-panel); }
+.admin-root[data-admin-theme="light"] .bg-ink-600 { background-color: var(--al-surface); }
+.admin-root[data-admin-theme="light"] .bg-white\/5 { background-color: var(--al-tint); }
+
+/* Text */
+.admin-root[data-admin-theme="light"] .text-cream { color: var(--al-text); }
+.admin-root[data-admin-theme="light"] .text-muted-400 { color: var(--al-muted-1); }
+.admin-root[data-admin-theme="light"] .text-muted-600 { color: var(--al-muted-2); }
+.admin-root[data-admin-theme="light"] .text-muted-700 { color: var(--al-muted-3); }
+.admin-root[data-admin-theme="light"] .text-gold { color: var(--al-gold); }
+
+/* Borders */
+.admin-root[data-admin-theme="light"] .border-white\/10 { border-color: var(--al-border); }
+.admin-root[data-admin-theme="light"] .border-white\/5 { border-color: var(--al-border-soft); }
+
+/* Hover / focus states */
+.admin-root[data-admin-theme="light"] .hover\:text-cream:hover { color: var(--al-text); }
+.admin-root[data-admin-theme="light"] .hover\:text-gold:hover { color: var(--al-gold); }
+.admin-root[data-admin-theme="light"] .hover\:bg-white\/5:hover { background-color: var(--al-tint); }
+
+/* Inputs inherit the surface colour cleanly */
+.admin-root[data-admin-theme="light"] input,
+.admin-root[data-admin-theme="light"] textarea,
+.admin-root[data-admin-theme="light"] select {
+  color: var(--al-text);
+}
+.admin-root[data-admin-theme="light"] input::placeholder,
+.admin-root[data-admin-theme="light"] textarea::placeholder {
+  color: var(--al-muted-1);
+}
