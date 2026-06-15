@@ -1,0 +1,58 @@
+# Postfix main.cf — mail_travel (Protocol DMC)
+# ${VAR} o'rinbosarlari setup.sh tomonidan envsubst bilan to'ldiriladi.
+
+# --- Asosiy identifikatsiya ---
+myhostname = ${MAIL_HOSTNAME}
+myorigin = ${MAIL_DOMAIN}
+mydestination = localhost
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+inet_interfaces = all
+inet_protocols = all
+biff = no
+append_dot_mydomain = no
+readme_directory = no
+compatibility_level = 3.6
+
+# --- TLS (kiruvchi) ---
+smtpd_tls_cert_file = ${TLS_CERT}
+smtpd_tls_key_file = ${TLS_KEY}
+smtpd_tls_security_level = may
+smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_auth_only = yes
+smtp_tls_security_level = may
+smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+# --- SASL autentifikatsiya (Dovecot orqali) ---
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain = $myhostname
+
+# --- Cheklovlar (relay himoyasi) ---
+smtpd_relay_restrictions =
+    permit_mynetworks
+    permit_sasl_authenticated
+    reject_unauth_destination
+smtpd_recipient_restrictions =
+    permit_mynetworks
+    permit_sasl_authenticated
+    reject_unauth_destination
+
+# --- Virtual mailbox domenlari (Dovecot LMTP orqali yetkazish) ---
+virtual_mailbox_domains = hash:/etc/postfix/vmail_domains
+virtual_mailbox_maps = hash:/etc/postfix/vmail_mailbox
+virtual_alias_maps = hash:/etc/postfix/vmail_alias
+virtual_transport = lmtp:unix:private/dovecot-lmtp
+
+# --- DKIM (OpenDKIM milter) ---
+milter_default_action = accept
+milter_protocol = 6
+smtpd_milters = inet:127.0.0.1:8891
+non_smtpd_milters = inet:127.0.0.1:8891
+
+# --- Hajm cheklovi (50MB) ---
+message_size_limit = 52428800
+mailbox_size_limit = 0

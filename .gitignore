@@ -32,3 +32,13 @@ next-env.d.ts
 
 # sqlite database (runtime data)
 /data
+
+# mail server secrets (Brevo key, mailbox passwords)
+/mail_travel/.env
+
+# Claude internal memory (not project code)
+/memory
+
+# migration bundle (DKIM key, passwords — never commit)
+/mail_travel/migration
+/mail_travel/*.tar.gz
