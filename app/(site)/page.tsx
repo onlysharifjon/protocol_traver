@@ -29,10 +29,12 @@ export default function HomePage() {
           alt="Registan Square, Samarkand illuminated at dusk"
           fill
           priority
+          quality={90}
+          sizes="100vw"
           className="animate-slowZoom object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/40 to-ink" />
-        <div className="absolute inset-0 bg-ink/30" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/25 to-ink" />
+        <div className="absolute inset-0 bg-ink/15" />
 
         <div className="container-x relative z-10 text-center">
           <p className="animate-fadeUp font-sans text-[10px] uppercase tracking-[0.35em] text-gold">

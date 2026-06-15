@@ -128,6 +128,8 @@ const ru: SiteContent = {
     { label: "Направления", href: "/destinations" },
     { label: "О нас", href: "/about" },
     { label: "Документы", href: "/documents" },
+    { label: "MICE и мероприятия", href: "/mice-events" },
+    { label: "VIP-услуги", href: "/vip-services" },
     { label: "Контакты", href: "#contact" },
   ],
   contact: {
@@ -299,6 +301,8 @@ const en: SiteContent = {
     { label: "Destinations", href: "/destinations" },
     { label: "About", href: "/about" },
     { label: "Documents", href: "/documents" },
+    { label: "MICE & Events", href: "/mice-events" },
+    { label: "VIP Services", href: "/vip-services" },
     { label: "Contact", href: "#contact" },
   ],
   contact: {

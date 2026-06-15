@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Sidebar from "@/components/dashboard/Sidebar";
 import LangSwitcher from "@/components/LangSwitcher";
-import { getAdminLang } from "@/lib/locale";
+import ThemeSwitcher from "@/components/dashboard/ThemeSwitcher";
+import { getAdminLang, getAdminTheme } from "@/lib/locale";
 import { logout } from "../actions";
 
 export const metadata = { title: "Dashboard — Protocol" };
@@ -13,8 +14,12 @@ export default function PanelLayout({
   children: React.ReactNode;
 }) {
   const adminLang = getAdminLang();
+  const adminTheme = getAdminTheme();
   return (
-    <div className="flex min-h-screen bg-ink text-cream">
+    <div
+      className="admin-root flex min-h-screen bg-ink text-cream"
+      data-admin-theme={adminTheme}
+    >
       {/* Sidebar */}
       <aside className="fixed inset-y-0 left-0 hidden w-60 shrink-0 flex-col justify-between overflow-y-auto border-r border-white/10 bg-ink-900 md:flex">
         <div>
@@ -30,6 +35,12 @@ export default function PanelLayout({
                 Editing
               </span>
               <LangSwitcher current={adminLang} cookieName="admin_lang" />
+            </div>
+            <div className="mt-2 flex items-center justify-between border border-white/10 bg-ink px-3 py-2">
+              <span className="font-sans text-[8px] uppercase tracking-[0.25em] text-muted-600">
+                Theme
+              </span>
+              <ThemeSwitcher current={adminTheme} />
             </div>
           </div>
           <Sidebar />
@@ -56,6 +67,7 @@ export default function PanelLayout({
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 md:hidden">
           <span className="font-serif tracking-wide">PROTOCOL Admin</span>
           <div className="flex items-center gap-4">
+            <ThemeSwitcher current={adminTheme} />
             <LangSwitcher current={adminLang} cookieName="admin_lang" />
             <form action={logout}>
               <button className="font-sans text-[10px] uppercase tracking-[0.2em] text-muted-400">
