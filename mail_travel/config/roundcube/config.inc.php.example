@@ -1,0 +1,27 @@
+<?php
+/* Roundcube webmail — Protocol DMC namuna konfiguratsiyasi.
+ * Haqiqiy fayl: /var/www/roundcube/config/config.inc.php
+ * des_key ni o'zingiznikiga almashtiring: openssl rand -base64 18 | cut -c1-24
+ */
+$config = [];
+
+// Ma'lumotlar bazasi (SQLite)
+$config['db_dsnw'] = 'sqlite:////var/lib/roundcube/roundcube.db?mode=0646';
+
+// IMAP — o'z Dovecot serverimiz (TLS)
+$config['imap_host'] = 'ssl://mail.protocoldmc.com:993';
+
+// SMTP — o'z Postfix submission (u Brevo orqali relay qiladi)
+$config['smtp_host'] = 'tls://mail.protocoldmc.com:587';
+$config['smtp_user'] = '%u';
+$config['smtp_pass'] = '%p';
+
+$config['support_url'] = '';
+$config['product_name'] = 'Protocol DMC Webmail';
+$config['des_key'] = 'CHANGE_ME_24_CHARS______';   // maxfiy — almashtiring
+$config['enable_installer'] = false;
+$config['skin'] = 'elastic';
+$config['plugins'] = ['archive', 'zipdownload'];
+$config['language'] = 'ru_RU';
+$config['session_lifetime'] = 30;
+$config['ip_check'] = true;

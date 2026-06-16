@@ -1,0 +1,74 @@
+# Dovecot konfiguratsiyasi — mail_travel (Protocol DMC)
+# Bitta faylga jamlangan sozlama. setup.sh uni /etc/dovecot/dovecot.conf ga joylaydi.
+
+protocols = imap lmtp
+listen = *, ::
+
+# --- Pochta saqlash (virtual maildir) ---
+mail_location = maildir:${VMAIL_DIR}/%d/%n/Maildir
+mail_privileged_group = vmail
+first_valid_uid = 5000
+first_valid_gid = 5000
+
+# vmail foydalanuvchisi sifatida yetkazish
+mail_uid = vmail
+mail_gid = vmail
+
+# --- Autentifikatsiya ---
+disable_plaintext_auth = yes
+auth_mechanisms = plain login
+
+# Virtual foydalanuvchilar passwd-faylda (setup/add-mailbox tomonidan boshqariladi)
+passdb {
+  driver = passwd-file
+  args = scheme=ARGON2ID username_format=%u /etc/dovecot/users
+}
+userdb {
+  driver = static
+  args = uid=vmail gid=vmail home=${VMAIL_DIR}/%d/%n
+}
+
+# --- TLS ---
+ssl = required
+ssl_cert = <${TLS_CERT}
+ssl_key = <${TLS_KEY}
+ssl_min_protocol = TLSv1.2
+
+# --- Postfix uchun SASL auth soketi ---
+service auth {
+  unix_listener /var/spool/postfix/private/auth {
+    mode = 0660
+    user = postfix
+    group = postfix
+  }
+}
+
+# --- Postfix uchun LMTP yetkazish soketi ---
+service lmtp {
+  unix_listener /var/spool/postfix/private/dovecot-lmtp {
+    mode = 0600
+    user = postfix
+    group = postfix
+  }
+}
+
+# --- IMAP namespace (standart papkalar) ---
+namespace inbox {
+  inbox = yes
+  mailbox Drafts {
+    special_use = \Drafts
+    auto = subscribe
+  }
+  mailbox Sent {
+    special_use = \Sent
+    auto = subscribe
+  }
+  mailbox Junk {
+    special_use = \Junk
+    auto = subscribe
+  }
+  mailbox Trash {
+    special_use = \Trash
+    auto = subscribe
+  }
+}
