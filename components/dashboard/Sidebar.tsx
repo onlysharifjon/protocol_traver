@@ -34,6 +34,7 @@ export default function Sidebar() {
     <nav className="pb-12">
       <div className="pt-4">
         <Item href="/dashboard" label="Overview" />
+        <Item href="/admin" label="Tour Orders" />
       </div>
 
       <Heading>Page Text</Heading>

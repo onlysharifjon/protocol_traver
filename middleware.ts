@@ -25,8 +25,14 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
-  // The login page is public; everything else under /dashboard requires a session.
-  if (pathname.startsWith("/dashboard") && pathname !== "/dashboard/login") {
+  // Protected areas: the dashboard (except its login page) and the /admin
+  // orders view. Both reuse the same session; unauthenticated requests are
+  // sent to the dashboard login.
+  const isProtected =
+    (pathname.startsWith("/dashboard") && pathname !== "/dashboard/login") ||
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/");
+  if (isProtected) {
     const token = req.cookies.get(SESSION_COOKIE)?.value;
     const valid = await verifySessionToken(token);
     if (!valid) {

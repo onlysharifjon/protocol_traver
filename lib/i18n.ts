@@ -18,6 +18,18 @@ type UIStrings = {
   docDownload: string;
   footerTagline: string;
   footerRights: string;
+  // Tour booking
+  book: string;
+  bookHeading: string;
+  bookSubheading: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  submitBooking: string;
+  sending: string;
+  bookingSuccess: string;
+  bookingError: string;
+  close: string;
 };
 
 const dict: Record<Locale, UIStrings> = {
@@ -39,6 +51,17 @@ const dict: Record<Locale, UIStrings> = {
     footerTagline:
       "Ведущий частный туроператор Узбекистана. Ташкент, основан в 2008 году.",
     footerRights: "Все права защищены.",
+    book: "Забронировать",
+    bookHeading: "Бронирование тура",
+    bookSubheading: "Оставьте контакты — мы перезвоним и подтвердим детали.",
+    firstName: "Имя",
+    lastName: "Фамилия",
+    phone: "Номер телефона",
+    submitBooking: "Отправить заявку",
+    sending: "Отправка…",
+    bookingSuccess: "Спасибо! Мы свяжемся с вами в ближайшее время.",
+    bookingError: "Пожалуйста, заполните все поля.",
+    close: "Закрыть",
   },
   en: {
     scroll: "Scroll",
@@ -58,6 +81,17 @@ const dict: Record<Locale, UIStrings> = {
     footerTagline:
       "Uzbekistan's premier private tour operator. Tashkent, established 2008.",
     footerRights: "All rights reserved.",
+    book: "Book This Tour",
+    bookHeading: "Book Your Tour",
+    bookSubheading: "Leave your details — we'll call you back to confirm.",
+    firstName: "First name",
+    lastName: "Last name",
+    phone: "Phone number",
+    submitBooking: "Send Request",
+    sending: "Sending…",
+    bookingSuccess: "Thank you! We'll be in touch shortly.",
+    bookingError: "Please fill in all fields.",
+    close: "Close",
   },
 };
 

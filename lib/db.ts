@@ -185,6 +185,18 @@ function initSchema(db: Database.Database) {
       label TEXT NOT NULL,
       href TEXT NOT NULL DEFAULT '#'
     );
+    -- Customer tour bookings. Not content (never seeded / never language-scoped);
+    -- written by the public site, read in the /admin page.
+    CREATE TABLE IF NOT EXISTS orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      tour_id INTEGER,
+      tour_title TEXT NOT NULL,
+      first_name TEXT NOT NULL,
+      last_name TEXT NOT NULL,
+      phone TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'new'
+    );
   `);
 }
 

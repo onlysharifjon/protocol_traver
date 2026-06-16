@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import BookTour from "@/components/BookTour";
 import { getSettings, getTours } from "@/lib/queries";
 import { getLang } from "@/lib/locale";
 import { t } from "@/lib/i18n";
@@ -73,7 +73,7 @@ export default function ToursPage() {
         <div className="container-x grid grid-cols-1 gap-x-8 gap-y-16 md:grid-cols-2 lg:grid-cols-3">
           {tours.map((tour, i) => (
             <Reveal as="article" delay={(i % 3) * 120} key={tour.id}>
-              <Link href="#" className="group block">
+              <div className="group block">
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <Image
                     src={tour.image}
@@ -105,11 +105,11 @@ export default function ToursPage() {
                   <span className="font-serif text-xl text-gold">
                     {tour.price}
                   </span>
-                  <span className="link-underline font-sans text-[9px] uppercase tracking-[0.25em] text-muted-400 group-hover:text-gold">
-                    {ui.viewTour}
-                  </span>
                 </div>
-              </Link>
+                <div className="mt-4">
+                  <BookTour tourId={tour.id} tourTitle={tour.title} ui={ui} />
+                </div>
+              </div>
             </Reveal>
           ))}
         </div>

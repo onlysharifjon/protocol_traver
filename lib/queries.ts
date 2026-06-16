@@ -163,3 +163,23 @@ export function getBrand(lang: Locale = DEFAULT_LOCALE) {
     tagline: s.brand_tagline ?? "Travel Services",
   };
 }
+
+export type Order = {
+  id: number;
+  created_at: string;
+  tour_id: number | null;
+  tour_title: string;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  status: string;
+};
+
+// Newest bookings first (for the /admin page).
+export function getOrders(): Order[] {
+  return db
+    .prepare(
+      "SELECT id, created_at, tour_id, tour_title, first_name, last_name, phone, status FROM orders ORDER BY datetime(created_at) DESC, id DESC"
+    )
+    .all() as Order[];
+}
