@@ -183,3 +183,95 @@ export function getOrders(): Order[] {
     )
     .all() as Order[];
 }
+
+// ---------- Itineraries (detailed day-by-day tour programmes) ----------
+export type ItineraryRow = {
+  id: number;
+  slug: string;
+  theme: string;
+  eyebrow: string;
+  title_main: string;
+  title_accent: string;
+  subtitle: string;
+  rule: string;
+  chips: string;
+  tagline: string;
+  duration_label: string;
+  cities_label: string;
+  image: string;
+  overview_eyebrow: string;
+  overview_title: string;
+  overview_meta: string;
+  overview_col3: string;
+  closing_title_main: string;
+  closing_title_accent: string;
+  closing_text: string;
+  closing_route: string;
+  closing_tagline: string;
+  footer: string;
+};
+
+// Summary list for the tours page (one row per programme).
+export function getItineraries() {
+  return db
+    .prepare(
+      "SELECT id, slug, theme, title_main, title_accent, subtitle, eyebrow, duration_label, cities_label, image FROM itineraries ORDER BY position, id"
+    )
+    .all() as {
+    id: number;
+    slug: string;
+    theme: string;
+    title_main: string;
+    title_accent: string;
+    subtitle: string;
+    eyebrow: string;
+    duration_label: string;
+    cities_label: string;
+    image: string;
+  }[];
+}
+
+export type ItineraryBlock = {
+  id: number;
+  type: string;
+  opt: number;
+  sunset: number;
+  icon: string;
+  eyebrow: string;
+  title: string;
+  body: string;
+  quote: string;
+  tags: string;
+  tip: string;
+  data: string;
+};
+export type ItineraryDay = {
+  id: number;
+  num: string;
+  label: string;
+  title_main: string;
+  title_accent: string;
+  subtitle: string;
+  ov_program: string;
+  ov_city: string;
+  ov_gold: number;
+  blocks: ItineraryBlock[];
+};
+
+// Full programme by slug, with nested days and blocks.
+export function getItinerary(slug: string) {
+  const itin = db
+    .prepare("SELECT * FROM itineraries WHERE slug = ? ORDER BY position, id LIMIT 1")
+    .get(slug) as ItineraryRow | undefined;
+  if (!itin) return null;
+
+  const days = db
+    .prepare("SELECT * FROM itinerary_days WHERE itinerary_id = ? ORDER BY position, id")
+    .all(itin.id) as ItineraryDay[];
+  const blockStmt = db.prepare(
+    "SELECT * FROM itinerary_blocks WHERE day_id = ? ORDER BY position, id"
+  );
+  for (const d of days) d.blocks = blockStmt.all(d.id) as ItineraryBlock[];
+
+  return { itin, days };
+}

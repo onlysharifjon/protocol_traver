@@ -1,7 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import BookTour from "@/components/BookTour";
-import { getSettings, getTours } from "@/lib/queries";
+import { getSettings, getTours, getItineraries } from "@/lib/queries";
 import { getLang } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 
@@ -15,6 +16,7 @@ export default function ToursPage() {
   const ui = t(lang);
   const s = getSettings("tours", lang);
   const tours = getTours(lang);
+  const itineraries = getItineraries();
 
   const filters = [
     { label: ui.filterDestination, value: ui.allDestinations },
@@ -67,6 +69,51 @@ export default function ToursPage() {
           </Reveal>
         </div>
       </section>
+
+      {/* Detailed day-by-day programmes */}
+      {itineraries.length > 0 && (
+        <section className="bg-ink pb-24">
+          <div className="container-x">
+            <Reveal>
+              <p className="eyebrow">Программы по дням</p>
+              <h2 className="mt-4 font-serif text-3xl font-light text-cream md:text-4xl">
+                Авторские маршруты
+              </h2>
+            </Reveal>
+            <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+              {itineraries.map((it, i) => {
+                const title = [it.title_main, it.title_accent].filter(Boolean).join(" ");
+                return (
+                  <Reveal as="article" delay={(i % 2) * 120} key={it.id}>
+                    <Link
+                      href={`/tours/${it.slug}`}
+                      className="group block border border-white/10 bg-ink-600 p-8 transition-colors hover:border-gold/40"
+                    >
+                      <p className="font-sans text-[9px] uppercase tracking-[0.3em] text-gold">
+                        {it.eyebrow}
+                      </p>
+                      <h3 className="mt-4 font-serif text-3xl font-light text-cream transition-colors group-hover:text-gold">
+                        {title}
+                      </h3>
+                      <p className="mt-2 font-sans text-[11px] uppercase tracking-[0.2em] text-muted-400">
+                        {it.cities_label}
+                      </p>
+                      <div className="mt-6 flex items-center justify-between border-t border-white/5 pt-5">
+                        <span className="font-sans text-[11px] tracking-wide text-muted-400">
+                          {it.duration_label}
+                        </span>
+                        <span className="link-underline font-sans text-[9px] uppercase tracking-[0.25em] text-gold">
+                          Смотреть программу →
+                        </span>
+                      </div>
+                    </Link>
+                  </Reveal>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Tour grid */}
       <section className="bg-ink pb-32">

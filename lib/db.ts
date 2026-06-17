@@ -4,6 +4,45 @@ import path from "path";
 import fs from "fs";
 import { content, LOCALES, SETTING_KEY_GROUP, type Locale } from "./data";
 
+type ItinTitle = { main: string; accent: string };
+type ItinBlock = {
+  type: string;
+  opt?: boolean;
+  sunset?: boolean;
+  icon?: string;
+  eyebrow?: string;
+  title?: string;
+  body?: string[];
+  quote?: string;
+  tags?: string[];
+  tip?: string;
+  data?: unknown;
+};
+type ItinDay = {
+  num: string;
+  label: string;
+  title: ItinTitle;
+  subtitle: string;
+  overview: { program: string; city: string; gold: boolean };
+  blocks: ItinBlock[];
+};
+type ItinSeed = {
+  slug: string;
+  theme: string;
+  cover: {
+    eyebrow: string;
+    title: ItinTitle;
+    subtitle: string;
+    rule: string;
+    chips: string[];
+    tagline: string;
+  };
+  overview: { eyebrow: string; title: string; meta: string; col3: string };
+  days: ItinDay[];
+  closing: { title: ItinTitle; text: string; route: string[]; tagline: string };
+  footer: string;
+};
+
 // --- Connection (singleton across hot reloads) ---
 const DB_DIR = path.join(process.cwd(), "data");
 const DB_PATH = path.join(DB_DIR, "protocol.db");
@@ -17,7 +56,117 @@ function createConnection(): Database.Database {
   migrateLegacySchema(db);
   initSchema(db);
   seedIfEmpty(db);
+  seedItineraries(db);
   return db;
+}
+
+// --- Itinerary seed (idempotent; runs even on a pre-existing DB) ---
+function seedItineraries(db: Database.Database) {
+  const tx = db.transaction(() => {
+    const n = db.prepare("SELECT COUNT(*) AS n FROM itineraries").get() as {
+      n: number;
+    };
+    if (n.n > 0) return;
+
+    const seedPath = path.join(process.cwd(), "lib", "itineraries.seed.json");
+    if (!fs.existsSync(seedPath)) return;
+    const items = JSON.parse(fs.readFileSync(seedPath, "utf8")) as ItinSeed[];
+
+    const itinStmt = db.prepare(
+      `INSERT INTO itineraries
+        (lang, position, slug, theme, eyebrow, title_main, title_accent, subtitle,
+         rule, chips, tagline, duration_label, cities_label, image,
+         overview_eyebrow, overview_title, overview_meta, overview_col3,
+         closing_title_main, closing_title_accent, closing_text, closing_route,
+         closing_tagline, footer)
+       VALUES (@lang,@position,@slug,@theme,@eyebrow,@title_main,@title_accent,@subtitle,
+         @rule,@chips,@tagline,@duration_label,@cities_label,@image,
+         @overview_eyebrow,@overview_title,@overview_meta,@overview_col3,
+         @closing_title_main,@closing_title_accent,@closing_text,@closing_route,
+         @closing_tagline,@footer)`
+    );
+    const dayStmt = db.prepare(
+      `INSERT INTO itinerary_days
+        (lang, itinerary_id, position, num, label, title_main, title_accent,
+         subtitle, ov_program, ov_city, ov_gold)
+       VALUES (@lang,@itinerary_id,@position,@num,@label,@title_main,@title_accent,
+         @subtitle,@ov_program,@ov_city,@ov_gold)`
+    );
+    const blockStmt = db.prepare(
+      `INSERT INTO itinerary_blocks
+        (lang, day_id, position, type, opt, sunset, icon, eyebrow, title, body,
+         quote, tags, tip, data)
+       VALUES (@lang,@day_id,@position,@type,@opt,@sunset,@icon,@eyebrow,@title,@body,
+         @quote,@tags,@tip,@data)`
+    );
+
+    items.forEach((it, ii) => {
+      const info = itinStmt.run({
+        lang: "ru",
+        position: ii,
+        slug: it.slug,
+        theme: it.theme || "dark",
+        eyebrow: it.cover.eyebrow,
+        title_main: it.cover.title.main,
+        title_accent: it.cover.title.accent,
+        subtitle: it.cover.subtitle,
+        rule: it.cover.rule,
+        chips: it.cover.chips.join(" · "),
+        tagline: it.cover.tagline,
+        duration_label: it.cover.chips[0] ?? "",
+        cities_label: it.cover.subtitle,
+        image: "",
+        overview_eyebrow: it.overview.eyebrow,
+        overview_title: it.overview.title,
+        overview_meta: it.overview.meta,
+        overview_col3: it.overview.col3,
+        closing_title_main: it.closing.title.main,
+        closing_title_accent: it.closing.title.accent,
+        closing_text: it.closing.text,
+        closing_route: it.closing.route.join(" · "),
+        closing_tagline: it.closing.tagline,
+        footer: it.footer,
+      });
+      const itinId = Number(info.lastInsertRowid);
+
+      it.days.forEach((d, di) => {
+        const dInfo = dayStmt.run({
+          lang: "ru",
+          itinerary_id: itinId,
+          position: di,
+          num: d.num,
+          label: d.label,
+          title_main: d.title.main,
+          title_accent: d.title.accent,
+          subtitle: d.subtitle,
+          ov_program: d.overview.program,
+          ov_city: d.overview.city,
+          ov_gold: d.overview.gold ? 1 : 0,
+        });
+        const dayId = Number(dInfo.lastInsertRowid);
+
+        d.blocks.forEach((b, bi) => {
+          blockStmt.run({
+            lang: "ru",
+            day_id: dayId,
+            position: bi,
+            type: b.type,
+            opt: b.opt ? 1 : 0,
+            sunset: b.sunset ? 1 : 0,
+            icon: b.icon ?? "",
+            eyebrow: b.eyebrow ?? "",
+            title: b.title ?? "",
+            body: (b.body ?? []).join("\n\n"),
+            quote: b.quote ?? "",
+            tags: (b.tags ?? []).join(", "),
+            tip: b.tip ?? "",
+            data: b.data ? JSON.stringify(b.data) : "",
+          });
+        });
+      });
+    });
+  });
+  tx.exclusive();
 }
 
 // Every content table created by initSchema. Kept here so the legacy migration
@@ -196,6 +345,66 @@ function initSchema(db: Database.Database) {
       last_name TEXT NOT NULL,
       phone TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'new'
+    );
+    -- Detailed day-by-day tour programmes (itineraries):
+    -- itineraries -> itinerary_days -> itinerary_blocks.
+    CREATE TABLE IF NOT EXISTS itineraries (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      lang TEXT NOT NULL DEFAULT 'ru',
+      position INTEGER NOT NULL DEFAULT 0,
+      slug TEXT NOT NULL,
+      theme TEXT NOT NULL DEFAULT 'dark',
+      eyebrow TEXT NOT NULL DEFAULT '',
+      title_main TEXT NOT NULL DEFAULT '',
+      title_accent TEXT NOT NULL DEFAULT '',
+      subtitle TEXT NOT NULL DEFAULT '',
+      rule TEXT NOT NULL DEFAULT '',
+      chips TEXT NOT NULL DEFAULT '',
+      tagline TEXT NOT NULL DEFAULT '',
+      duration_label TEXT NOT NULL DEFAULT '',
+      cities_label TEXT NOT NULL DEFAULT '',
+      image TEXT NOT NULL DEFAULT '',
+      overview_eyebrow TEXT NOT NULL DEFAULT '',
+      overview_title TEXT NOT NULL DEFAULT '',
+      overview_meta TEXT NOT NULL DEFAULT '',
+      overview_col3 TEXT NOT NULL DEFAULT '',
+      closing_title_main TEXT NOT NULL DEFAULT '',
+      closing_title_accent TEXT NOT NULL DEFAULT '',
+      closing_text TEXT NOT NULL DEFAULT '',
+      closing_route TEXT NOT NULL DEFAULT '',
+      closing_tagline TEXT NOT NULL DEFAULT '',
+      footer TEXT NOT NULL DEFAULT ''
+    );
+    CREATE TABLE IF NOT EXISTS itinerary_days (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      lang TEXT NOT NULL DEFAULT 'ru',
+      itinerary_id INTEGER NOT NULL REFERENCES itineraries(id) ON DELETE CASCADE,
+      position INTEGER NOT NULL DEFAULT 0,
+      num TEXT NOT NULL DEFAULT '',
+      label TEXT NOT NULL DEFAULT '',
+      title_main TEXT NOT NULL DEFAULT '',
+      title_accent TEXT NOT NULL DEFAULT '',
+      subtitle TEXT NOT NULL DEFAULT '',
+      ov_program TEXT NOT NULL DEFAULT '',
+      ov_city TEXT NOT NULL DEFAULT '',
+      ov_gold INTEGER NOT NULL DEFAULT 0
+    );
+    CREATE TABLE IF NOT EXISTS itinerary_blocks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      lang TEXT NOT NULL DEFAULT 'ru',
+      day_id INTEGER NOT NULL REFERENCES itinerary_days(id) ON DELETE CASCADE,
+      position INTEGER NOT NULL DEFAULT 0,
+      type TEXT NOT NULL DEFAULT 'text',
+      opt INTEGER NOT NULL DEFAULT 0,
+      sunset INTEGER NOT NULL DEFAULT 0,
+      icon TEXT NOT NULL DEFAULT '',
+      eyebrow TEXT NOT NULL DEFAULT '',
+      title TEXT NOT NULL DEFAULT '',
+      body TEXT NOT NULL DEFAULT '',
+      quote TEXT NOT NULL DEFAULT '',
+      tags TEXT NOT NULL DEFAULT '',
+      tip TEXT NOT NULL DEFAULT '',
+      data TEXT NOT NULL DEFAULT ''
     );
   `);
 }
