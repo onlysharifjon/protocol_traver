@@ -1,0 +1,242 @@
+/* Scoped styles for detailed itinerary pages. All classes are `itin-`
+   prefixed and tokens live on `.itin-root` so nothing leaks into the rest of
+   the (Tailwind) site. Two themes via [data-itin-theme]. */
+
+.itin-root {
+  --i-bg: #0a0a0a;
+  --i-deep: #111111;
+  --i-card: #161616;
+  --i-border: #2a2a2a;
+  --i-border-l: #333333;
+  --i-gold: #c9a84c;
+  --i-gold-light: #e4c97e;
+  --i-ivory: #f0ead6;
+  --i-muted: #6b6b6b;
+  --i-text: #c8c3b8;
+  --i-radius: 2px;
+  --i-display: var(--font-cormorant), Georgia, serif;
+  --i-body: var(--font-montserrat), sans-serif;
+
+  background: var(--i-bg);
+  color: var(--i-text);
+  font-family: var(--i-body);
+  font-size: 13px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+.itin-root[data-itin-theme="light"] {
+  --i-bg: #faf7ef;
+  --i-deep: #f3eee0;
+  --i-card: #ffffff;
+  --i-border: #e3dac4;
+  --i-border-l: #d6c9a8;
+  --i-gold: #9c7426;
+  --i-gold-light: #8a6420;
+  --i-ivory: #1a1712;
+  --i-muted: #73684f;
+  --i-text: #3a352a;
+}
+.itin-root *, .itin-root *::before, .itin-root *::after { box-sizing: border-box; }
+
+/* logo */
+.itin-logo { display: flex; flex-direction: column; align-items: center; }
+.itin-logo-name { font-family: var(--i-display); letter-spacing: 0.22em; text-transform: uppercase; color: var(--i-ivory); }
+.itin-logo-divider { height: 1px; background: var(--i-gold); margin: 5px 0; }
+.itin-logo-tag { font-family: var(--i-body); font-size: 7.5px; font-weight: 400; letter-spacing: 0.48em; text-transform: uppercase; color: var(--i-gold); }
+
+/* nav */
+.itin-nav { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--i-bg) 96%, transparent); border-bottom: 1px solid var(--i-border); backdrop-filter: blur(8px); padding: 0 40px; }
+.itin-nav-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; }
+.itin-nav-logo { margin-right: 32px; padding: 14px 0; flex-shrink: 0; }
+.itin-nav-logo .itin-logo-name { font-size: 14px; letter-spacing: 0.2em; }
+.itin-nav-logo .itin-logo-tag { font-size: 6px; letter-spacing: 0.4em; }
+.itin-nav-logo .itin-logo-divider { width: 24px; margin: 3px 0; }
+.itin-nav-days { display: flex; overflow-x: auto; scrollbar-width: none; flex: 1; }
+.itin-nav-days::-webkit-scrollbar { display: none; }
+.itin-nav-btn { white-space: nowrap; font-family: var(--i-body); font-size: 9.5px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--i-muted); padding: 18px 14px; text-decoration: none; transition: color .2s; border-bottom: 1px solid transparent; margin-bottom: -1px; }
+.itin-nav-btn:hover { color: var(--i-gold-light); }
+
+/* cover */
+.itin-cover { min-height: 92vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 80px 40px; position: relative; overflow: hidden; background: var(--i-bg); }
+.itin-cover::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 40% at 50% 70%, color-mix(in srgb, var(--i-gold) 10%, transparent) 0%, transparent 65%); pointer-events: none; }
+.itin-cover-ornament { width: 1px; height: 72px; background: linear-gradient(to bottom, transparent, var(--i-gold), transparent); margin: 0 auto 44px; }
+.itin-cover-eyebrow { font-size: 9px; font-weight: 500; letter-spacing: 0.38em; text-transform: uppercase; color: var(--i-gold); margin-bottom: 24px; position: relative; }
+.itin-cover-logo { margin-bottom: 36px; position: relative; }
+.itin-cover-logo .itin-logo-name { font-size: 30px; }
+.itin-cover-logo .itin-logo-divider { width: 44px; margin: 7px auto; }
+.itin-cover-logo .itin-logo-tag { font-size: 9px; }
+.itin-cover-title { font-family: var(--i-display); font-size: clamp(48px, 7vw, 88px); font-weight: 300; letter-spacing: 0.06em; color: var(--i-ivory); line-height: 1.08; margin-bottom: 10px; position: relative; }
+.itin-cover-title em { font-style: italic; color: var(--i-gold-light); }
+.itin-cover-subtitle { font-size: 10px; font-weight: 300; letter-spacing: 0.32em; text-transform: uppercase; color: var(--i-muted); margin-bottom: 48px; position: relative; }
+.itin-cover-rule { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; position: relative; }
+.itin-cover-rule::before, .itin-cover-rule::after { content: ''; width: 72px; height: 1px; }
+.itin-cover-rule::before { background: linear-gradient(to right, transparent, var(--i-gold)); }
+.itin-cover-rule::after { background: linear-gradient(to left, transparent, var(--i-gold)); }
+.itin-cover-rule span { font-size: 9px; letter-spacing: 0.28em; color: var(--i-gold); text-transform: uppercase; }
+.itin-cover-chips { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; position: relative; }
+.itin-cover-chip { border: 1px solid var(--i-border-l); border-radius: var(--i-radius); padding: 7px 18px; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--i-muted); }
+.itin-cover-tagline { position: absolute; bottom: 40px; font-family: var(--i-display); font-size: 14px; font-style: italic; color: var(--i-muted); }
+
+.itin-wrap { max-width: 960px; margin: 0 auto; padding: 0 40px 100px; }
+
+/* overview */
+.itin-overview { border: 1px solid var(--i-border); background: var(--i-card); border-radius: var(--i-radius); overflow: hidden; margin: 56px 0; }
+.itin-overview-head { padding: 28px 32px 24px; border-bottom: 1px solid var(--i-border); display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.itin-overview-eyebrow { font-size: 9px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--i-gold); margin-bottom: 8px; }
+.itin-overview-title { font-family: var(--i-display); font-size: 26px; font-weight: 300; color: var(--i-ivory); }
+.itin-overview-meta { font-size: 10px; color: var(--i-muted); letter-spacing: 0.1em; }
+.itin-table { width: 100%; border-collapse: collapse; }
+.itin-table th { padding: 10px 20px; font-size: 8.5px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase; color: var(--i-gold); text-align: left; border-bottom: 1px solid var(--i-border); background: var(--i-deep); }
+.itin-table td { padding: 12px 20px; font-size: 12px; border-bottom: 1px solid var(--i-border); vertical-align: top; color: var(--i-text); font-weight: 300; }
+.itin-table tr:last-child td { border-bottom: none; }
+.itin-dnum { font-weight: 500; color: var(--i-gold); font-size: 13px; width: 50px; }
+.itin-citytag { display: inline-block; font-size: 8.5px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; padding: 3px 10px; border: 1px solid var(--i-border-l); border-radius: var(--i-radius); color: var(--i-muted); white-space: nowrap; }
+.itin-citytag.gold { border-color: color-mix(in srgb, var(--i-gold) 45%, transparent); color: var(--i-gold); }
+
+/* day */
+.itin-day { margin-top: 56px; }
+.itin-day-header { padding: 36px 36px 28px; border: 1px solid var(--i-border); border-bottom: none; position: relative; overflow: hidden; background: var(--i-deep); border-radius: var(--i-radius) var(--i-radius) 0 0; }
+.itin-day-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, var(--i-gold), transparent); }
+.itin-day-header-inner { display: flex; align-items: flex-start; gap: 24px; }
+.itin-day-ghost { font-family: var(--i-display); font-size: 80px; font-weight: 300; line-height: 1; color: color-mix(in srgb, var(--i-gold) 8%, transparent); flex-shrink: 0; margin-top: -8px; }
+.itin-day-label { font-size: 9px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--i-gold); margin-bottom: 8px; }
+.itin-day-title { font-family: var(--i-display); font-size: clamp(26px, 4vw, 38px); font-weight: 300; color: var(--i-ivory); line-height: 1.15; margin-bottom: 6px; }
+.itin-day-title em { font-style: italic; color: var(--i-gold-light); }
+.itin-day-subtitle { font-size: 10px; font-weight: 300; letter-spacing: 0.2em; text-transform: uppercase; color: var(--i-muted); }
+.itin-day-body { border: 1px solid var(--i-border); border-top: 1px solid var(--i-border-l); background: var(--i-card); border-radius: 0 0 var(--i-radius) var(--i-radius); }
+
+/* block */
+.itin-block { padding: 28px 32px; border-bottom: 1px solid var(--i-border); }
+.itin-block:last-child { border-bottom: none; }
+.itin-block.opt { border-left: 1px solid color-mix(in srgb, var(--i-gold) 35%, transparent); background: var(--i-deep); }
+.itin-block.sunset { background: var(--i-deep); position: relative; overflow: hidden; }
+.itin-block.sunset::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, var(--i-gold), transparent); }
+.itin-block-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.itin-icon { width: 36px; height: 36px; border: 1px solid var(--i-border-l); border-radius: var(--i-radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 17px; color: var(--i-gold); background: var(--i-deep); }
+.itin-eyebrow { font-size: 8.5px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase; color: var(--i-gold); margin-bottom: 3px; }
+.itin-block-title { font-family: var(--i-display); font-size: 19px; font-weight: 300; color: var(--i-ivory); }
+.itin-opt-label { display: inline-flex; align-items: center; gap: 6px; font-size: 8.5px; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--i-gold); border: 1px solid color-mix(in srgb, var(--i-gold) 35%, transparent); padding: 3px 10px; border-radius: var(--i-radius); margin-bottom: 14px; }
+.itin-text { font-size: 13px; font-weight: 300; line-height: 1.85; color: var(--i-text); margin-bottom: 12px; }
+.itin-text:last-child { margin-bottom: 0; }
+
+.itin-quote { border-left: 1px solid var(--i-gold); padding: 14px 20px; margin: 18px 0; background: color-mix(in srgb, var(--i-gold) 5%, transparent); }
+.itin-quote-text { font-family: var(--i-display); font-size: 17px; font-weight: 300; font-style: italic; color: var(--i-gold-light); line-height: 1.55; }
+
+.itin-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.itin-tag { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--i-muted); border: 1px solid var(--i-border-l); border-radius: var(--i-radius); padding: 3px 10px; }
+
+.itin-tip { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border: 1px solid var(--i-border); background: var(--i-deep); border-radius: var(--i-radius); margin-top: 14px; font-size: 11px; font-weight: 300; color: var(--i-muted); line-height: 1.7; }
+.itin-tip i { font-size: 15px; color: var(--i-gold); margin-top: 1px; flex-shrink: 0; }
+
+/* train */
+.itin-train { background: var(--i-deep); border: 1px solid var(--i-border); border-radius: var(--i-radius); padding: 18px 24px; display: flex; align-items: center; gap: 16px; margin: 16px 0; }
+.itin-train-city { text-align: center; min-width: 90px; }
+.itin-train-name { font-family: var(--i-display); font-size: 17px; font-weight: 300; color: var(--i-ivory); }
+.itin-train-sub { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--i-muted); margin-top: 2px; }
+.itin-train-mid { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.itin-train-line { width: 100%; display: flex; align-items: center; gap: 6px; }
+.itin-train-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--i-gold); }
+.itin-train-dash { flex: 1; border-top: 1px solid var(--i-border-l); }
+.itin-train-dur { font-size: 12px; color: var(--i-ivory); letter-spacing: 0.08em; }
+.itin-train-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--i-muted); }
+.itin-train i { font-size: 18px; color: var(--i-gold); }
+
+/* info-table */
+.itin-info { width: 100%; border-collapse: collapse; margin: 14px 0; }
+.itin-info td { padding: 10px 14px; font-size: 12px; border: 1px solid var(--i-border); vertical-align: top; font-weight: 300; }
+.itin-info td:first-child { background: var(--i-deep); color: var(--i-gold); font-size: 9px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; width: 160px; white-space: nowrap; }
+
+/* choice / compare / cols / depart / trip grids */
+.itin-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin: 16px 0; }
+.itin-cardlet { background: var(--i-deep); border: 1px solid var(--i-border); padding: 20px; }
+.itin-cardlet.rec { border-top: 1px solid var(--i-gold); }
+.itin-cardlet.dim-top { border-top: 1px solid var(--i-border-l); }
+.itin-cardlet-eyebrow { font-size: 8.5px; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--i-gold); margin-bottom: 8px; }
+.itin-cardlet-eyebrow.dim { color: var(--i-muted); }
+.itin-cardlet-title { font-family: var(--i-display); font-size: 16px; font-weight: 300; color: var(--i-ivory); margin-bottom: 6px; }
+.itin-cardlet-desc { font-size: 11px; font-weight: 300; color: var(--i-muted); line-height: 1.7; margin-bottom: 8px; }
+.itin-kv { display: flex; gap: 8px; font-size: 11px; margin-bottom: 4px; }
+.itin-kv-key { color: var(--i-muted); min-width: 80px; flex-shrink: 0; }
+.itin-kv-val { color: var(--i-text); }
+.itin-cardlet-note { margin-top: 8px; font-size: 10px; color: var(--i-muted); line-height: 1.7; }
+.itin-cardlet-head { padding: 16px 20px 0; }
+.itin-cardlet-body { padding: 8px 20px 16px; }
+
+/* stat */
+.itin-stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin: 16px 0; }
+.itin-stat-card { background: var(--i-deep); border: 1px solid var(--i-border); padding: 18px 20px; text-align: center; }
+.itin-stat-val { font-family: var(--i-display); font-size: 24px; font-weight: 300; color: var(--i-gold-light); }
+.itin-stat-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--i-muted); margin-top: 4px; }
+
+/* timeline */
+.itin-tl { background: var(--i-deep); border: 1px solid var(--i-border); border-radius: var(--i-radius); padding: 16px 20px; margin-top: 16px; }
+.itin-tl-row { display: flex; align-items: baseline; gap: 12px; padding: 3.5px 0; font-size: 12px; }
+.itin-tl-time { font-size: 9px; letter-spacing: 0.12em; color: var(--i-gold); min-width: 110px; flex-shrink: 0; }
+.itin-tl-event { font-weight: 300; color: var(--i-text); }
+
+/* item grids (walk/shop/cols) */
+.itin-items { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 14px; }
+.itin-item { background: var(--i-deep); border: 1px solid var(--i-border); padding: 16px 18px; }
+.itin-item-title { font-size: 11px; font-weight: 500; color: var(--i-ivory); margin-bottom: 5px; display: flex; align-items: center; gap: 7px; }
+.itin-item-title i { color: var(--i-gold); font-size: 13px; }
+.itin-item-name { font-family: var(--i-display); font-size: 15px; font-weight: 300; color: var(--i-ivory); margin-bottom: 4px; }
+.itin-item-desc { font-size: 11px; font-weight: 300; color: var(--i-muted); line-height: 1.6; }
+
+/* road strip */
+.itin-road { background: var(--i-deep); border: 1px solid var(--i-border); border-radius: var(--i-radius); padding: 20px 24px; margin: 16px 0; }
+.itin-road-label { font-size: 9px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase; color: var(--i-gold); margin-bottom: 18px; }
+.itin-road-item { display: flex; gap: 16px; padding-bottom: 16px; }
+.itin-road-item:last-child { padding-bottom: 0; }
+.itin-road-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--i-gold); flex-shrink: 0; margin-top: 3px; }
+.itin-road-place { font-size: 13px; color: var(--i-ivory); margin-bottom: 2px; font-family: var(--i-display); }
+.itin-road-meta { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--i-gold); margin-bottom: 4px; }
+.itin-road-desc { font-size: 11px; font-weight: 300; color: var(--i-muted); line-height: 1.6; }
+
+/* trip cards (big) */
+.itin-trip-card { background: var(--i-deep); border: 1px solid var(--i-border); padding: 24px; display: flex; flex-direction: column; }
+.itin-trip-card.a { border-top: 1px solid var(--i-gold); }
+.itin-trip-card.b { border-top: 1px solid var(--i-border-l); }
+.itin-trip-icon { width: 40px; height: 40px; border: 1px solid var(--i-border-l); border-radius: var(--i-radius); display: flex; align-items: center; justify-content: center; font-size: 19px; color: var(--i-gold); margin-bottom: 16px; }
+.itin-trip-title { font-family: var(--i-display); font-size: 21px; font-weight: 300; color: var(--i-ivory); margin-bottom: 10px; }
+
+/* inclusions */
+.itin-incl { padding: 20px 32px; border-top: 1px solid var(--i-border); background: var(--i-deep); border-radius: 0 0 var(--i-radius) var(--i-radius); }
+.itin-incl-label { font-size: 8.5px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase; color: var(--i-gold); margin-bottom: 12px; }
+.itin-incl-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.itin-incl-item { border: 1px solid var(--i-border-l); border-radius: var(--i-radius); padding: 6px 12px; font-size: 10px; font-weight: 300; letter-spacing: 0.08em; color: var(--i-muted); display: flex; align-items: center; gap: 6px; }
+.itin-incl-item i { font-size: 13px; color: var(--i-gold); }
+
+.itin-divider { height: 1px; background: var(--i-border); margin: 18px 0; }
+
+/* closing */
+.itin-closing { margin-top: 64px; padding: 56px 40px; text-align: center; border: 1px solid var(--i-border); background: var(--i-deep); border-radius: var(--i-radius); position: relative; }
+.itin-closing::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, var(--i-gold), transparent); }
+.itin-closing-ornament { width: 1px; height: 56px; background: linear-gradient(to bottom, var(--i-gold), transparent); margin: 0 auto 32px; }
+.itin-closing-title { font-family: var(--i-display); font-size: 32px; font-weight: 300; color: var(--i-ivory); margin-bottom: 16px; }
+.itin-closing-title em { font-style: italic; color: var(--i-gold-light); }
+.itin-closing-text { font-size: 13px; font-weight: 300; color: var(--i-muted); line-height: 1.85; max-width: 520px; margin: 0 auto 32px; }
+.itin-route { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; }
+.itin-route-city { font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--i-gold); border: 1px solid color-mix(in srgb, var(--i-gold) 35%, transparent); padding: 6px 16px; border-radius: var(--i-radius); }
+.itin-route-arrow { color: var(--i-border-l); font-size: 16px; }
+.itin-closing-tagline { margin-top: 36px; font-family: var(--i-display); font-size: 16px; font-style: italic; color: var(--i-gold-light); }
+
+/* footer */
+.itin-foot { border-top: 1px solid var(--i-border); padding: 32px 40px; display: flex; align-items: center; justify-content: space-between; max-width: 960px; margin: 0 auto; }
+.itin-foot-text { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--i-muted); }
+
+/* back link + theme toggle bar */
+.itin-bar { max-width: 960px; margin: 0 auto; padding: 18px 40px 0; display: flex; align-items: center; justify-content: space-between; }
+.itin-back { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--i-muted); text-decoration: none; }
+.itin-back:hover { color: var(--i-gold); }
+
+@media (max-width: 680px) {
+  .itin-nav, .itin-wrap, .itin-foot, .itin-bar { padding-left: 20px; padding-right: 20px; }
+  .itin-cover { padding: 60px 24px; }
+  .itin-day-header { padding: 28px 24px 22px; }
+  .itin-block { padding: 22px 20px; }
+  .itin-incl { padding: 16px 20px; }
+  .itin-grid2, .itin-stat, .itin-items { grid-template-columns: 1fr; }
+  .itin-train { flex-direction: column; gap: 12px; }
+  .itin-day-ghost { display: none; }
+  .itin-nav-logo { display: none; }
+}
