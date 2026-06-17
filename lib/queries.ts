@@ -275,3 +275,20 @@ export function getItinerary(slug: string) {
 
   return { itin, days };
 }
+
+// ---------- VIP exclusive destinations (bilingual showcase) ----------
+export type VipDestination = {
+  id: number;
+  eyebrow: string;
+  title: string;
+  body_ru: string;
+  body_en: string;
+  image: string;
+};
+export function getVipDestinations(): VipDestination[] {
+  return db
+    .prepare(
+      "SELECT id, eyebrow, title, body_ru, body_en, image FROM vip_destinations ORDER BY position, id"
+    )
+    .all() as VipDestination[];
+}

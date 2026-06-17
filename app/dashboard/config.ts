@@ -282,6 +282,21 @@ export const RESOURCES: Resource[] = [
       positionField,
     ],
   },
+  {
+    slug: "vip-destinations",
+    table: "vip_destinations",
+    title: "VIP Destination",
+    titlePlural: "VIP Destinations",
+    listColumns: ["title", "eyebrow"],
+    fields: [
+      { name: "eyebrow", label: "Eyebrow (RU / EN)", type: "text" },
+      { name: "title", label: "Title (RU / EN)", type: "text" },
+      { name: "body_ru", label: "Description (Russian)", type: "textarea" },
+      { name: "body_en", label: "Description (English)", type: "textarea" },
+      { name: "image", label: "Image", type: "image" },
+      positionField,
+    ],
+  },
 ];
 
 export function getResource(slug: string): Resource | undefined {

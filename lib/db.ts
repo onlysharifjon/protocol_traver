@@ -57,7 +57,78 @@ function createConnection(): Database.Database {
   initSchema(db);
   seedIfEmpty(db);
   seedItineraries(db);
+  seedVipDestinations(db);
   return db;
+}
+
+// --- VIP destinations seed (idempotent) ---
+const VIP_DESTINATIONS: {
+  eyebrow: string;
+  title: string;
+  body_ru: string;
+  body_en: string;
+  image: string;
+}[] = [
+  {
+    eyebrow: "Жемчужина Востока / Pearl of the East",
+    title: "Самарканд / Samarkand",
+    body_ru:
+      "Город, в котором синева небес отражается в куполах тысячелетней империи. Самарканд — сердце Шёлкового пути — предлагает закат над Регистаном в абсолютном уединении, ужин среди мозаик XV века и ночлег в особняке, где история — не экспонат, а живой воздух вокруг вас.",
+    body_en:
+      "A city where the blue of the heavens mirrors the domes of a millennial empire. Samarkand — the soul of the Silk Road — offers a private sunset over the Registan, dinner among 15th-century mosaics, and nights in a residence where history isn't a museum piece, it's the very air you breathe.",
+    image: "/images/dest-samarkand.jpg",
+  },
+  {
+    eyebrow: "Священный город / Sacred City",
+    title: "Бухара / Bukhara",
+    body_ru:
+      "Бухара не меняется — она вечна. Здесь каждая улочка хранит тайну, а воздух пропитан шафраном и молитвой. Эксклюзивный опыт — закрытый доступ в медресе на рассвете, ночь в рияде с личным дворецким и шёлковые ткани прямо с рук мастера, чья семья ткёт уже восемь поколений.",
+    body_en:
+      "Bukhara doesn't change — it endures. Every alleyway holds a secret; the air is steeped in saffron and prayer. Exclusive access to a madrassa at dawn, a night in a private riad with a personal butler, and silk purchased directly from a master whose family has woven for eight generations.",
+    image: "/images/dest-bukhara.jpg",
+  },
+  {
+    eyebrow: "Затерянный оазис / Lost Oasis",
+    title: "Хива / Khiva",
+    body_ru:
+      "Когда стены Ичан-калы закрываются на рассвете только для вас — понимаешь, что попал в другое измерение. Хива — музей под открытым небом, дошедший до нас нетронутым сквозь века. Приватная прогулка по крепостным стенам, ужин на кровле с видом на пустыню Кызылкум и звёздное небо без единого огня вокруг — вот роскошь, которую не купить нигде больше.",
+    body_en:
+      "When the walls of Ichan-Kala open at dawn for you alone, you understand you've crossed into another dimension. Khiva is an open-air museum delivered intact across the centuries. A private walk along the fortress ramparts, dinner on a rooftop facing the Kyzylkum desert, and a starlit sky with no light for miles — a luxury found nowhere else on earth.",
+    image: "/images/dest-khiva.jpg",
+  },
+  {
+    eyebrow: "Столица / Capital",
+    title: "Ташкент / Tashkent",
+    body_ru:
+      "Восток встречается с авангардом. Ташкент — это динамичная столица, где советский модернизм соседствует с древними базарами и ультрасовременными кварталами. Для взыскательного путешественника — закрытые дегустации, апартаменты с видом на ночной город и персональный гид, открывающий ворота туда, куда не ступает случайный турист.",
+    body_en:
+      "Where East meets the avant-garde. Tashkent is a vibrant capital where Soviet modernism stands alongside ancient bazaars and cutting-edge districts. For the discerning traveller — private tastings, suites overlooking the glittering city skyline, and a personal guide who unlocks doors no casual tourist ever finds.",
+    image: "/images/dest-tashkent.jpg",
+  },
+  {
+    eyebrow: "Колыбель ремёсел / Cradle of Crafts",
+    title: "Ферганская долина / Fergana Valley",
+    body_ru:
+      "Там, где горы смыкаются в объятиях, рождается самое сердце Средней Азии. Ферганская долина — это живая легенда шёлка, фарфора и пряностей, где мастера передают секреты из рук в руки уже тысячу лет. Для избранного гостя — частный визит в ателье икат-ткачества, дегустация редких сортов плова прямо у тандыра и рассвет над виноградниками, о котором не пишут в путеводителях.",
+    body_en:
+      "Cradled between mountain ranges lies the very heart of Central Asia. The Fergana Valley is a living legend of silk, porcelain, and spice, where masters have passed their secrets hand to hand for a thousand years. For the privileged guest — a private visit to an ikat weaving atelier, a tasting of rare plov varieties straight from the tandoor, and a dawn over the vineyards that no guidebook has ever described.",
+    image: "/images/dest-fergana.jpg",
+  },
+];
+
+function seedVipDestinations(db: Database.Database) {
+  const tx = db.transaction(() => {
+    const n = db.prepare("SELECT COUNT(*) AS n FROM vip_destinations").get() as {
+      n: number;
+    };
+    if (n.n > 0) return;
+    const stmt = db.prepare(
+      `INSERT INTO vip_destinations (lang, position, eyebrow, title, body_ru, body_en, image)
+       VALUES ('ru', @position, @eyebrow, @title, @body_ru, @body_en, @image)`
+    );
+    VIP_DESTINATIONS.forEach((d, i) => stmt.run({ ...d, position: i }));
+  });
+  tx.exclusive();
 }
 
 // --- Itinerary seed (idempotent; runs even on a pre-existing DB) ---
@@ -405,6 +476,17 @@ function initSchema(db: Database.Database) {
       tags TEXT NOT NULL DEFAULT '',
       tip TEXT NOT NULL DEFAULT '',
       data TEXT NOT NULL DEFAULT ''
+    );
+    -- VIP exclusive destinations (shown bilingually on the VIP page).
+    CREATE TABLE IF NOT EXISTS vip_destinations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      lang TEXT NOT NULL DEFAULT 'ru',
+      position INTEGER NOT NULL DEFAULT 0,
+      eyebrow TEXT NOT NULL DEFAULT '',
+      title TEXT NOT NULL DEFAULT '',
+      body_ru TEXT NOT NULL DEFAULT '',
+      body_en TEXT NOT NULL DEFAULT '',
+      image TEXT NOT NULL DEFAULT ''
     );
   `);
 }
