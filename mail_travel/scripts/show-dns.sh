@@ -23,10 +23,14 @@ cat <<EOF
    ${MAIL_DOMAIN}.   MX   10   ${MAIL_HOSTNAME}.
 
 3) SPF — kim yuborishi mumkinligi (TXT)
-   ${MAIL_DOMAIN}.   TXT   "v=spf1 mx a:${MAIL_HOSTNAME} -all"
+   # Chiquvchi xatlar Brevo relay orqali ketadi, shuning uchun Brevo IP'lari
+   # ham ruxsat etilishi shart: include:spf.brevo.com
+   ${MAIL_DOMAIN}.   TXT   "v=spf1 mx a:${MAIL_HOSTNAME} include:spf.brevo.com -all"
 
 4) DMARC — siyosat (TXT)
-   _dmarc.${MAIL_DOMAIN}.   TXT   "v=DMARC1; p=quarantine; rua=mailto:postmaster@${MAIL_DOMAIN}; adkim=s; aspf=s"
+   # Relay (Brevo) orqali yuborishda relaxed alignment (r) xavfsizroq —
+   # DKIM yoki SPF'dan biri mos kelsa yetarli.
+   _dmarc.${MAIL_DOMAIN}.   TXT   "v=DMARC1; p=quarantine; rua=mailto:postmaster@${MAIL_DOMAIN}; adkim=r; aspf=r"
 
 5) DKIM — imzo kaliti (TXT)
 EOF
