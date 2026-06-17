@@ -56,9 +56,38 @@ function createConnection(): Database.Database {
   migrateLegacySchema(db);
   initSchema(db);
   seedIfEmpty(db);
+  seedNavItems(db);
   seedItineraries(db);
   seedVipDestinations(db);
   return db;
+}
+
+// --- Nav items seed (idempotent; runs even on a pre-existing DB) ---
+// seedIfEmpty only fills nav_items on a brand-new database, so menu items added
+// to `content.nav` in code never reached DBs seeded earlier (e.g. MICE & VIP).
+// This adds any code-defined nav entry missing for a locale — matched by href —
+// appending it at the end, without touching or removing existing rows so
+// admin-customised entries (labels, order, extra links) are preserved.
+function seedNavItems(db: Database.Database) {
+  const tx = db.transaction(() => {
+    const has = db.prepare(
+      "SELECT 1 FROM nav_items WHERE lang = ? AND href = ? LIMIT 1"
+    );
+    const maxPos = db.prepare(
+      "SELECT COALESCE(MAX(position), -1) AS m FROM nav_items WHERE lang = ?"
+    );
+    const ins = db.prepare(
+      "INSERT INTO nav_items (lang, position, label, href) VALUES (?, ?, ?, ?)"
+    );
+    for (const lang of LOCALES as Locale[]) {
+      for (const n of content[lang].nav) {
+        if (has.get(lang, n.href)) continue;
+        const next = (maxPos.get(lang) as { m: number }).m + 1;
+        ins.run(lang, next, n.label, n.href);
+      }
+    }
+  });
+  tx.exclusive();
 }
 
 // --- VIP destinations seed (idempotent) ---
