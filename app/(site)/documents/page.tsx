@@ -27,10 +27,6 @@ export default function DocumentsPage() {
   const ui = t(lang);
   const s = getSettings("documents", lang);
   const documentGroups = getDocumentGroups(lang);
-  const summary = documentGroups.map((g) => ({
-    value: String(g.docs.length),
-    label: g.title,
-  }));
 
   return (
     <>
@@ -52,20 +48,6 @@ export default function DocumentsPage() {
               </p>
             </Reveal>
           </div>
-
-          {/* Summary */}
-          <Reveal delay={200} className="mt-12 flex flex-wrap gap-12 border-y border-white/5 py-8">
-            {summary.map((item) => (
-              <div key={item.label}>
-                <span className="font-serif text-3xl text-gold">
-                  {item.value}
-                </span>
-                <p className="mt-1 font-sans text-[9px] uppercase tracking-[0.18em] text-muted-700">
-                  {item.label}
-                </p>
-              </div>
-            ))}
-          </Reveal>
         </div>
       </section>
 

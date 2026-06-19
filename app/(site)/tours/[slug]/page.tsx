@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getItinerary } from "@/lib/queries";
+import { getLang } from "@/lib/locale";
+import { t } from "@/lib/i18n";
+import BookTour from "@/components/BookTour";
 import Block from "@/components/itinerary/Blocks";
 import "./itinerary.css";
 
@@ -24,6 +27,10 @@ export default function ItineraryPage({
   const data = getItinerary(params.slug);
   if (!data) notFound();
   const { itin, days } = data;
+
+  const lang = getLang();
+  const ui = t(lang);
+  const tourTitle = [itin.title_main, itin.title_accent].filter(Boolean).join(" ");
 
   const theme =
     searchParams.theme === "light" || searchParams.theme === "dark"
@@ -175,6 +182,16 @@ export default function ItineraryPage({
             {itin.closing_tagline && (
               <div className="itin-closing-tagline">{String(itin.closing_tagline)}</div>
             )}
+          </div>
+
+          {/* Booking / contact call-to-action */}
+          <div className="itin-cta">
+            <div className="itin-cta-buttons">
+              <BookTour tourId={0} tourTitle={tourTitle} ui={ui} />
+              <Link href="/#contact" className="itin-cta-contact">
+                {lang === "ru" ? "Связаться" : "Contact Us"}
+              </Link>
+            </div>
           </div>
         </div>
       </div>

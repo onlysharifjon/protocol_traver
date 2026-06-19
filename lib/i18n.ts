@@ -49,7 +49,7 @@ const dict: Record<Locale, UIStrings> = {
     docView: "Просмотр",
     docDownload: "Скачать",
     footerTagline:
-      "Ведущий частный туроператор Узбекистана. Ташкент, основан в 2008 году.",
+      "Частный туроператор VIP-класса в Узбекистане. Ташкент.",
     footerRights: "Все права защищены.",
     book: "Забронировать",
     bookHeading: "Бронирование тура",
@@ -79,7 +79,7 @@ const dict: Record<Locale, UIStrings> = {
     docView: "View",
     docDownload: "Download",
     footerTagline:
-      "Uzbekistan's premier private tour operator. Tashkent, established 2008.",
+      "A private VIP tour operator in Uzbekistan. Based in Tashkent.",
     footerRights: "All rights reserved.",
     book: "Book This Tour",
     bookHeading: "Book Your Tour",

@@ -21,7 +21,10 @@ const aspectBySpan: Record<string, string> = {
 
 function DestinationCard({ d, ui }: { d: Destination; ui: UI }) {
   return (
-    <Link href="/tours" className="group relative block overflow-hidden">
+    <Link
+      href={`/tours?dest=${encodeURIComponent(d.name)}`}
+      className="group relative block overflow-hidden"
+    >
       <div className={`relative w-full ${aspectBySpan[d.span] ?? "aspect-[4/5]"}`}>
         <Image
           src={d.image}

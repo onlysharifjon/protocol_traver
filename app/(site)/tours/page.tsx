@@ -11,15 +11,27 @@ export const metadata = {
 };
 export const dynamic = "force-dynamic";
 
-export default function ToursPage() {
+export default function ToursPage({
+  searchParams,
+}: {
+  searchParams?: { dest?: string };
+}) {
   const lang = getLang();
   const ui = t(lang);
   const s = getSettings("tours", lang);
-  const tours = getTours(lang);
+  const allTours = getTours(lang);
+
+  // Optional destination filter (set from the Destinations page cards).
+  const dest = searchParams?.dest?.trim() || "";
+  const matched = dest ? allTours.filter((tr) => tr.place === dest) : [];
+  // Fall back to the full list when a destination has no dedicated tour yet,
+  // so the page is never empty.
+  const tours = dest && matched.length > 0 ? matched : allTours;
+
   const itineraries = getItineraries();
 
   const filters = [
-    { label: ui.filterDestination, value: ui.allDestinations },
+    { label: ui.filterDestination, value: dest || ui.allDestinations },
     { label: ui.filterDuration, value: ui.anyDuration },
     { label: ui.filterTourType, value: ui.allTypes },
   ];
@@ -63,9 +75,19 @@ export default function ToursPage() {
                 </div>
               ))}
             </div>
-            <p className="font-serif text-lg text-muted-400">
-              {tours.length} {ui.journeys}
-            </p>
+            <div className="flex items-center gap-5">
+              {dest && (
+                <Link
+                  href="/tours"
+                  className="font-sans text-[10px] uppercase tracking-[0.25em] text-gold hover:text-cream"
+                >
+                  ✕ {ui.allDestinations}
+                </Link>
+              )}
+              <p className="font-serif text-lg text-muted-400">
+                {tours.length} {ui.journeys}
+              </p>
+            </div>
           </Reveal>
         </div>
       </section>

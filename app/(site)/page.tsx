@@ -162,27 +162,29 @@ export default function HomePage() {
       </section>
 
       {/* ---------------- STATS ---------------- */}
-      <section className="border-y border-white/5 bg-ink-900 py-20">
-        <div className="container-x grid grid-cols-2 gap-10 md:grid-cols-4">
-          {homeStats.map((stat, i) => (
-            <Reveal delay={i * 100} key={stat.label} className="text-center md:text-left">
-              <div className="flex items-baseline justify-center gap-1 md:justify-start">
-                <span className="font-serif text-5xl font-light text-cream md:text-6xl">
-                  {stat.value}
-                </span>
-                {stat.suffix && (
-                  <span className="font-serif text-xl text-gold">
-                    {stat.suffix}
+      {homeStats.length > 0 && (
+        <section className="border-y border-white/5 bg-ink-900 py-20">
+          <div className="container-x grid grid-cols-2 gap-10 md:grid-cols-4">
+            {homeStats.map((stat, i) => (
+              <Reveal delay={i * 100} key={stat.label} className="text-center md:text-left">
+                <div className="flex items-baseline justify-center gap-1 md:justify-start">
+                  <span className="font-serif text-5xl font-light text-cream md:text-6xl">
+                    {stat.value}
                   </span>
-                )}
-              </div>
-              <p className="mt-4 font-sans text-[10px] uppercase tracking-[0.2em] text-muted-400">
-                {stat.label}
-              </p>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+                  {stat.suffix && (
+                    <span className="font-serif text-xl text-gold">
+                      {stat.suffix}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-4 font-sans text-[10px] uppercase tracking-[0.2em] text-muted-400">
+                  {stat.label}
+                </p>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ---------------- TESTIMONIAL ---------------- */}
       <section className="relative overflow-hidden bg-ink py-32 md:py-40">
@@ -197,14 +199,20 @@ export default function HomePage() {
             <blockquote className="mx-auto mt-6 max-w-4xl font-serif text-2xl font-light italic leading-[1.5] text-cream md:text-[40px] md:leading-[1.45]">
               {s.testimonial_quote}
             </blockquote>
-            <div className="mt-12">
-              <p className="font-sans text-[11px] uppercase tracking-[0.25em] text-cream">
-                {s.testimonial_name}
-              </p>
-              <p className="mt-2 font-sans text-[10px] uppercase tracking-[0.2em] text-muted-400">
-                {s.testimonial_place}
-              </p>
-            </div>
+            {(s.testimonial_name || s.testimonial_place) && (
+              <div className="mt-12">
+                {s.testimonial_name && (
+                  <p className="font-sans text-[11px] uppercase tracking-[0.25em] text-cream">
+                    {s.testimonial_name}
+                  </p>
+                )}
+                {s.testimonial_place && (
+                  <p className="mt-2 font-sans text-[10px] uppercase tracking-[0.2em] text-muted-400">
+                    {s.testimonial_place}
+                  </p>
+                )}
+              </div>
+            )}
           </Reveal>
         </div>
       </section>
