@@ -103,20 +103,33 @@ export default function Header({
 
       {/* Mobile menu */}
       <div
-        className={`overflow-hidden border-t border-white/5 bg-ink/95 backdrop-blur-md transition-all duration-500 lg:hidden ${
-          open ? "max-h-96" : "max-h-0"
+        className={`overflow-y-auto overscroll-contain border-t border-white/5 bg-ink/95 backdrop-blur-md transition-all duration-500 lg:hidden ${
+          open ? "max-h-[80vh]" : "max-h-0 overflow-hidden"
         }`}
       >
-        <nav className="container-x flex flex-col gap-5 py-8">
-          {nav.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="font-sans text-xs uppercase tracking-[0.2em] text-cream hover:text-gold"
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav className="container-x flex flex-col py-6">
+          {nav.map((item) => {
+            const active =
+              item.href !== "#contact" &&
+              (item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href));
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`border-b border-white/5 py-4 font-sans text-xs uppercase tracking-[0.2em] transition-colors hover:text-gold ${
+                  active ? "text-gold" : "text-cream"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+          {/* Language switcher — header bar hides it below sm, so surface it here */}
+          <div className="flex items-center gap-2 pt-6 sm:hidden">
+            <LangSwitcher current={lang} />
+          </div>
         </nav>
       </div>
     </header>

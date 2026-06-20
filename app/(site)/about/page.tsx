@@ -24,7 +24,7 @@ export default function AboutPage() {
         <div className="container-x">
           <Reveal>
             <p className="eyebrow">{s.about_eyebrow}</p>
-            <h1 className="mt-6 font-serif text-6xl font-light leading-[0.92] text-cream md:text-8xl lg:text-[112px]">
+            <h1 className="mt-6 font-serif text-5xl font-light leading-[0.95] text-cream sm:text-6xl sm:leading-[0.92] md:text-8xl lg:text-[112px]">
               {s.about_title_1}
               <br />
               {s.about_title_2}

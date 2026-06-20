@@ -61,7 +61,7 @@ export default function BookTour({
           onClick={() => setOpen(false)}
         >
           <div
-            className="relative w-full max-w-md border border-white/10 bg-ink-600 p-8 md:p-10"
+            className="relative max-h-[90vh] w-full max-w-md overflow-y-auto border border-white/10 bg-ink-600 p-7 sm:p-8 md:p-10"
             onClick={(e) => e.stopPropagation()}
           >
             <button

@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import BookTour from "@/components/BookTour";
 import { getLang } from "@/lib/locale";
 import { getVipDestinations } from "@/lib/queries";
+import { t } from "@/lib/i18n";
 
 export const metadata = {
   title: "VIP Services — Protocol",
@@ -55,6 +57,7 @@ const copy = {
 export default function VipServicesPage() {
   const lang = getLang();
   const c = copy[lang];
+  const ui = t(lang);
   const destinations = getVipDestinations();
 
   return (
@@ -152,6 +155,10 @@ export default function VipServicesPage() {
                           <p className="mt-3 font-sans text-[13px] font-light leading-[1.9] text-muted-400">
                             {d.body_en}
                           </p>
+                        </div>
+
+                        <div className="mt-8 max-w-xs">
+                          <BookTour tourId={0} tourTitle={`VIP — ${d.title}`} ui={ui} />
                         </div>
                       </div>
                     </article>
