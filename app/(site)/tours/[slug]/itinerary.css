@@ -239,6 +239,23 @@
   .itin-train { flex-direction: column; gap: 12px; }
   .itin-day-ghost { display: none; }
   .itin-nav-logo { display: none; }
+
+  /* Tighten the overview table and let it breathe within narrow screens */
+  .itin-overview-head { padding: 22px 20px 18px; }
+  .itin-overview-title { font-size: 22px; }
+  .itin-table th, .itin-table td { padding: 10px 14px; }
+  .itin-table th[style] { width: auto !important; }
+
+  /* Key/value info table: stack each pair so the fixed label column
+     (160px, nowrap) can't push the layout sideways */
+  .itin-info, .itin-info tbody, .itin-info tr { display: block; width: 100%; }
+  .itin-info td { display: block; width: auto; border-bottom: none; }
+  .itin-info tr { border: 1px solid var(--i-border); margin-bottom: 8px; }
+  .itin-info td:first-child { width: auto; white-space: normal; border-bottom: 1px solid var(--i-border); }
+
+  /* Closing + cover paddings */
+  .itin-closing { padding: 44px 24px; }
+  .itin-cta-buttons { max-width: 100%; }
 }
 
 /* Booking / contact CTA at the foot of each programme */

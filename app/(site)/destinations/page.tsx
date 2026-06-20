@@ -49,7 +49,7 @@ function DestinationCard({ d, ui }: { d: Destination; ui: UI }) {
         <p className="mt-3 max-w-xs font-sans text-xs font-light leading-relaxed text-cream/60">
           {d.blurb}
         </p>
-        <span className="link-underline mt-5 inline-block font-sans text-[9px] uppercase tracking-[0.3em] text-gold opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+        <span className="link-underline mt-5 inline-block font-sans text-[9px] uppercase tracking-[0.3em] text-gold opacity-100 transition-opacity duration-500 md:opacity-0 md:group-hover:opacity-100">
           {ui.discover}
         </span>
       </div>
@@ -72,7 +72,7 @@ export default function DestinationsPage() {
         <div className="container-x grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-end">
           <Reveal>
             <p className="eyebrow">{s.dest_eyebrow}</p>
-            <h1 className="mt-6 font-serif text-6xl font-light leading-[0.95] text-cream md:text-8xl lg:text-[96px]">
+            <h1 className="mt-6 font-serif text-5xl font-light leading-[1] text-cream sm:text-6xl sm:leading-[0.95] md:text-8xl lg:text-[96px]">
               {s.dest_title}
             </h1>
           </Reveal>

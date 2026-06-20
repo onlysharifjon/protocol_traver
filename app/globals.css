@@ -15,6 +15,15 @@
   body {
     @apply bg-ink text-cream font-sans antialiased;
     -webkit-font-smoothing: antialiased;
+    /* Guard against stray horizontal scroll from oversized decorative type
+       on narrow phones, without affecting fixed/sticky positioning. */
+    overflow-x: hidden;
+  }
+
+  /* Long single words (esp. Russian display headings) should wrap rather than
+     punch through the viewport on small screens. */
+  h1, h2, h3 {
+    overflow-wrap: break-word;
   }
 
   ::selection {
