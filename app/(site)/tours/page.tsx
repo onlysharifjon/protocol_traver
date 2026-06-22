@@ -170,12 +170,7 @@ export default function ToursPage({
                 <p className="mt-4 font-sans text-xs font-light leading-[1.85] text-muted-500">
                   {tour.body}
                 </p>
-                <div className="mt-6 flex items-center justify-between border-t border-white/5 pt-5">
-                  <span className="font-serif text-xl text-gold">
-                    {tour.price}
-                  </span>
-                </div>
-                <div className="mt-4">
+                <div className="mt-6 border-t border-white/5 pt-5">
                   <BookTour tourId={tour.id} tourTitle={tour.title} ui={ui} />
                 </div>
               </div>

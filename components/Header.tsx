@@ -38,9 +38,9 @@ export default function Header({
           : "border-b border-transparent bg-transparent"
       }`}
     >
-      <div className="container-x flex h-[72px] items-center justify-between">
+      <div className="container-x flex h-[72px] items-center justify-between gap-4">
         {/* Brand */}
-        <Link href="/" className="leading-none">
+        <Link href="/" className="shrink-0 leading-none">
           <span className="block font-serif text-xl tracking-[0.08em] text-cream">
             {brand.name}
           </span>
@@ -49,8 +49,9 @@ export default function Header({
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-9 lg:flex">
+        {/* Desktop nav — only at xl+, where the longer Russian labels fit
+            without colliding; smaller screens use the hamburger menu. */}
+        <nav className="hidden items-center gap-x-5 xl:flex 2xl:gap-x-7">
           {nav.map((item) => {
             const active =
               item.href !== "#contact" &&
@@ -61,7 +62,7 @@ export default function Header({
               <Link
                 key={item.label}
                 href={item.href}
-                className={`font-sans text-[11px] uppercase tracking-[0.2em] transition-colors duration-300 hover:text-gold ${
+                className={`whitespace-nowrap font-sans text-[11px] uppercase tracking-[0.16em] transition-colors duration-300 hover:text-gold ${
                   active ? "text-gold" : "text-cream"
                 }`}
               >
@@ -72,7 +73,7 @@ export default function Header({
         </nav>
 
         {/* Language + mobile toggle */}
-        <div className="flex items-center gap-4">
+        <div className="flex shrink-0 items-center gap-4">
           <div className="hidden items-center gap-2 sm:flex">
             <LangSwitcher current={lang} />
           </div>
@@ -80,7 +81,7 @@ export default function Header({
           <button
             aria-label="Menu"
             onClick={() => setOpen((v) => !v)}
-            className="flex h-8 w-8 flex-col items-center justify-center gap-[5px] lg:hidden"
+            className="flex h-8 w-8 flex-col items-center justify-center gap-[5px] xl:hidden"
           >
             <span
               className={`h-px w-5 bg-cream transition-all duration-300 ${
@@ -103,7 +104,7 @@ export default function Header({
 
       {/* Mobile menu */}
       <div
-        className={`overflow-y-auto overscroll-contain border-t border-white/5 bg-ink/95 backdrop-blur-md transition-all duration-500 lg:hidden ${
+        className={`overflow-y-auto overscroll-contain border-t border-white/5 bg-ink/95 backdrop-blur-md transition-all duration-500 xl:hidden ${
           open ? "max-h-[80vh]" : "max-h-0 overflow-hidden"
         }`}
       >

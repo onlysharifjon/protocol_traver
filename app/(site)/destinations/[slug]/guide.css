@@ -1,0 +1,183 @@
+/* Scoped styles for the "Гид по направлению" destination guide pages.
+   Everything is prefixed `dg-` and tokens live on `.dg-root` so nothing
+   leaks into the rest of the (Tailwind) site. Mirrors the dark editorial
+   look of the itinerary pages. */
+
+.dg-root {
+  --d-black: #0a0a0a;
+  --d-deep: #111111;
+  --d-card: #161616;
+  --d-border: #2a2a2a;
+  --d-border-l: #333333;
+  --d-gold: #c9a84c;
+  --d-gold-light: #e4c97e;
+  --d-ivory: #f0ead6;
+  --d-muted: #6b6b6b;
+  --d-text: #c8c3b8;
+  --d-radius: 2px;
+  --d-display: var(--font-cormorant), Georgia, serif;
+  --d-body: var(--font-montserrat), sans-serif;
+
+  background: var(--d-black);
+  color: var(--d-text);
+  font-family: var(--d-body);
+  font-size: 13px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+.dg-root *, .dg-root *::before, .dg-root *::after { box-sizing: border-box; }
+
+/* SECTION NAV — sticky just below the global site header (72px) */
+.dg-nav {
+  position: sticky; top: 71px; z-index: 40;
+  background: rgba(10, 10, 10, .96);
+  border-bottom: 1px solid var(--d-border);
+  backdrop-filter: blur(8px);
+}
+.dg-nav-inner { max-width: 920px; margin: 0 auto; padding: 0 40px; display: flex; align-items: center; }
+.dg-nav-sections { display: flex; overflow-x: auto; scrollbar-width: none; flex: 1; }
+.dg-nav-sections::-webkit-scrollbar { display: none; }
+.dg-nav-btn {
+  white-space: nowrap; font-family: var(--d-body); font-size: 9.5px; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--d-muted);
+  background: none; border: none; cursor: pointer; padding: 16px 13px; text-decoration: none;
+  display: inline-block; transition: color .2s; border-bottom: 1px solid transparent; margin-bottom: -1px;
+}
+.dg-nav-btn:hover { color: var(--d-gold-light); }
+.dg-nav-btn.active { color: var(--d-gold); border-bottom-color: var(--d-gold); }
+
+/* COVER */
+.dg-cover {
+  min-height: 88vh; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; padding: 120px 40px 80px;
+  position: relative; overflow: hidden; background: var(--d-black);
+}
+.dg-cover::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 70%, rgba(201, 168, 76, .1) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 30% at 20% 30%, rgba(201, 168, 76, .04) 0%, transparent 60%);
+}
+.dg-cover-ornament { width: 1px; height: 72px; background: linear-gradient(to bottom, transparent, var(--d-gold), transparent); margin: 0 auto 40px; }
+.dg-cover-eyebrow { font-size: 9px; font-weight: 500; letter-spacing: 0.38em; text-transform: uppercase; color: var(--d-gold); margin-bottom: 28px; position: relative; }
+.dg-cover-title { font-family: var(--d-display); font-size: clamp(48px, 7vw, 84px); font-weight: 300; letter-spacing: 0.06em; color: var(--d-ivory); line-height: 1.08; margin-bottom: 14px; position: relative; }
+.dg-cover-title em { font-style: italic; color: var(--d-gold-light); }
+.dg-cover-subtitle { font-family: var(--d-display); font-size: 16px; font-style: italic; font-weight: 300; letter-spacing: 0.02em; color: var(--d-muted); margin-bottom: 40px; position: relative; max-width: 560px; }
+.dg-cover-rule { display: flex; align-items: center; gap: 16px; margin-bottom: 40px; position: relative; }
+.dg-cover-rule::before { content: ''; width: 60px; height: 1px; background: linear-gradient(to right, transparent, var(--d-gold)); }
+.dg-cover-rule::after { content: ''; width: 60px; height: 1px; background: linear-gradient(to left, transparent, var(--d-gold)); }
+.dg-cover-rule span { font-size: 9px; letter-spacing: 0.28em; color: var(--d-gold); text-transform: uppercase; }
+.dg-cover-stats { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; position: relative; }
+.dg-cover-stat { text-align: center; }
+.dg-cover-stat-val { font-family: var(--d-display); font-size: 22px; font-weight: 300; color: var(--d-gold-light); }
+.dg-cover-stat-label { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--d-muted); margin-top: 4px; }
+
+/* PAGE */
+.dg-page { max-width: 920px; margin: 0 auto; padding: 0 40px 100px; }
+
+/* SECTION */
+.dg-section { margin-top: 72px; scroll-margin-top: 140px; }
+.dg-section:first-child { margin-top: 56px; }
+.dg-eyebrow { font-size: 9px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--d-gold); margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+.dg-eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--d-border); }
+.dg-title { font-family: var(--d-display); font-size: clamp(28px, 4vw, 38px); font-weight: 300; color: var(--d-ivory); letter-spacing: 0.03em; margin-bottom: 28px; line-height: 1.2; }
+.dg-title em { font-style: italic; color: var(--d-gold-light); }
+
+.dg-lede { font-family: var(--d-display); font-size: 19px; font-weight: 300; font-style: italic; color: var(--d-text); line-height: 1.6; margin-bottom: 24px; }
+.dg-body { font-size: 14px; font-weight: 300; line-height: 1.9; color: var(--d-text); margin-bottom: 16px; }
+.dg-body:last-child { margin-bottom: 0; }
+
+.dg-quote { border-left: 1px solid var(--d-gold); padding: 16px 22px; margin: 24px 0; background: rgba(201, 168, 76, .04); }
+.dg-quote-text { font-family: var(--d-display); font-size: 18px; font-weight: 300; font-style: italic; color: var(--d-gold-light); line-height: 1.55; letter-spacing: 0.02em; }
+
+/* DISTRICT CARDS */
+.dg-districts { display: grid; grid-template-columns: 1fr; gap: 2px; margin: 28px 0; }
+.dg-district { background: var(--d-deep); border: 1px solid var(--d-border); padding: 26px 28px; display: flex; gap: 20px; }
+.dg-district-num { font-family: var(--d-display); font-size: 32px; font-weight: 300; color: rgba(201, 168, 76, .25); flex-shrink: 0; line-height: 1; min-width: 36px; }
+.dg-district-name { font-family: var(--d-display); font-size: 19px; font-weight: 300; color: var(--d-ivory); margin-bottom: 6px; letter-spacing: 0.02em; }
+.dg-district-tag { font-size: 9px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--d-gold); margin-bottom: 10px; }
+.dg-district-desc { font-size: 13px; font-weight: 300; color: var(--d-text); line-height: 1.8; }
+
+/* STAT ROW */
+.dg-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin: 28px 0; }
+.dg-stat { background: var(--d-deep); border: 1px solid var(--d-border); padding: 20px 16px; text-align: center; }
+.dg-stat-val { font-family: var(--d-display); font-size: 22px; font-weight: 300; color: var(--d-gold-light); }
+.dg-stat-label { font-size: 8.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--d-muted); margin-top: 6px; line-height: 1.4; }
+
+/* TIMELINE / ERAS */
+.dg-eras { margin: 28px 0; }
+.dg-era { display: flex; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--d-border); }
+.dg-era:last-child { border-bottom: none; }
+.dg-era-period { font-family: var(--d-display); font-size: 15px; font-weight: 300; color: var(--d-gold); min-width: 130px; flex-shrink: 0; letter-spacing: 0.02em; }
+.dg-era-text { font-size: 13px; font-weight: 300; color: var(--d-text); line-height: 1.8; }
+.dg-era-text strong { color: var(--d-ivory); font-weight: 400; }
+
+/* CARD GRID (landmarks / crafts) */
+.dg-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin: 28px 0; }
+.dg-card { background: var(--d-deep); border: 1px solid var(--d-border); padding: 22px 24px; }
+.dg-card-icon { width: 34px; height: 34px; border: 1px solid var(--d-border-l); border-radius: var(--d-radius); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--d-gold); margin-bottom: 14px; }
+.dg-card-name { font-family: var(--d-display); font-size: 16px; font-weight: 300; color: var(--d-ivory); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.dg-card-name i { color: var(--d-gold); font-size: 15px; }
+.dg-card-desc { font-size: 12px; font-weight: 300; color: var(--d-muted); line-height: 1.7; }
+
+/* CONTRAST PANEL */
+.dg-contrast { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin: 28px 0; }
+.dg-contrast-card { background: var(--d-deep); border: 1px solid var(--d-border); padding: 26px 24px; }
+.dg-contrast-card.gold { border-top: 1px solid var(--d-gold); }
+.dg-contrast-card.dim { border-top: 1px solid var(--d-border-l); }
+.dg-contrast-label { font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 12px; }
+.dg-contrast-label.gold { color: var(--d-gold); }
+.dg-contrast-label.dim { color: var(--d-muted); }
+.dg-contrast-title { font-family: var(--d-display); font-size: 18px; font-weight: 300; color: var(--d-ivory); margin-bottom: 12px; }
+.dg-contrast-desc { font-size: 12.5px; font-weight: 300; color: var(--d-text); line-height: 1.8; }
+
+/* FEATURE PANEL */
+.dg-feature { background: var(--d-deep); border: 1px solid var(--d-border); border-top: 1px solid var(--d-gold); padding: 32px 36px; margin: 28px 0; text-align: center; }
+.dg-feature-title { font-family: var(--d-display); font-size: 20px; font-weight: 300; color: var(--d-ivory); margin-bottom: 8px; }
+.dg-feature-desc { font-size: 13px; font-weight: 300; color: var(--d-muted); line-height: 1.8; max-width: 540px; margin: 0 auto; }
+
+/* FOOD */
+.dg-food { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin: 28px 0; }
+.dg-food-item { background: var(--d-deep); border: 1px solid var(--d-border); padding: 20px 22px; }
+.dg-food-name { font-family: var(--d-display); font-size: 16px; font-weight: 300; color: var(--d-ivory); margin-bottom: 5px; }
+.dg-food-desc { font-size: 12px; font-weight: 300; color: var(--d-muted); line-height: 1.7; }
+
+/* CLIMATE TABLE */
+.dg-climate { width: 100%; border-collapse: collapse; margin: 24px 0; }
+.dg-climate th { padding: 10px 16px; font-size: 8.5px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--d-gold); text-align: left; border-bottom: 1px solid var(--d-border); background: var(--d-deep); }
+.dg-climate td { padding: 12px 16px; font-size: 12.5px; border-bottom: 1px solid var(--d-border); color: var(--d-text); font-weight: 300; }
+.dg-climate tr:last-child td { border-bottom: none; }
+
+/* TAGS */
+.dg-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.dg-tag { font-size: 9px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; color: var(--d-muted); border: 1px solid var(--d-border-l); border-radius: var(--d-radius); padding: 4px 11px; }
+
+/* CLOSING */
+.dg-closing { margin-top: 72px; padding: 56px 40px; text-align: center; border: 1px solid var(--d-border); border-top: 1px solid var(--d-gold); background: var(--d-deep); border-radius: var(--d-radius); position: relative; }
+.dg-closing::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, var(--d-gold), transparent); }
+.dg-closing-ornament { width: 1px; height: 56px; background: linear-gradient(to bottom, var(--d-gold), transparent); margin: 0 auto 32px; }
+.dg-closing-title { font-family: var(--d-display); font-size: 28px; font-weight: 300; color: var(--d-ivory); margin-bottom: 16px; letter-spacing: 0.04em; }
+.dg-closing-text { font-size: 13px; font-weight: 300; color: var(--d-muted); line-height: 1.85; max-width: 520px; margin: 0 auto 24px; }
+.dg-closing-tagline { margin-top: 8px; font-family: var(--d-display); font-size: 16px; font-style: italic; font-weight: 300; color: var(--d-gold-light); }
+
+/* CTA — booking / contact at the foot of the guide */
+.dg-cta { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 28px; }
+.dg-cta a {
+  display: inline-block; border: 1px solid color-mix(in srgb, var(--d-gold) 55%, transparent);
+  padding: 14px 32px; font-family: var(--d-body); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.3em; text-transform: uppercase; color: var(--d-gold);
+  text-decoration: none; transition: background .3s ease, color .3s ease;
+}
+.dg-cta a.primary { background: var(--d-gold); color: var(--d-black); border-color: var(--d-gold); }
+.dg-cta a:hover { background: var(--d-gold); color: var(--d-black); }
+
+@media (max-width: 680px) {
+  .dg-nav-inner { padding: 0 20px; }
+  .dg-page { padding: 0 20px 80px; }
+  .dg-cover { padding: 110px 24px 60px; }
+  .dg-cards, .dg-food, .dg-contrast { grid-template-columns: 1fr; }
+  .dg-stats { grid-template-columns: repeat(2, 1fr); }
+  .dg-district { flex-direction: column; gap: 12px; }
+  .dg-cover-stats { gap: 20px; }
+  .dg-feature { padding: 26px 22px; }
+}
