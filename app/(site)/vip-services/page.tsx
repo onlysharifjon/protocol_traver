@@ -1,10 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import BookTour from "@/components/BookTour";
 import { getLang } from "@/lib/locale";
-import { getVipDestinations } from "@/lib/queries";
-import { t } from "@/lib/i18n";
 
 export const metadata = {
   title: "VIP Services — Protocol",
@@ -57,8 +54,6 @@ const copy = {
 export default function VipServicesPage() {
   const lang = getLang();
   const c = copy[lang];
-  const ui = t(lang);
-  const destinations = getVipDestinations();
 
   return (
     <>
@@ -93,82 +88,6 @@ export default function VipServicesPage() {
           </Reveal>
         </div>
       </section>
-
-      {/* Exclusive VIP destinations — bilingual showcase with individual imagery */}
-      {destinations.length > 0 && (
-        <section className="border-t border-white/5 bg-ink py-24 md:py-32">
-          <div className="container-x">
-            <Reveal>
-              <p className="eyebrow">
-                {lang === "ru" ? "Куда мы вас отвезём" : "Where we take you"}
-              </p>
-              <h2 className="mt-6 font-serif text-4xl font-light text-cream md:text-5xl">
-                {lang === "ru" ? "Эксклюзивные направления" : "Exclusive Destinations"}
-              </h2>
-            </Reveal>
-
-            <div className="mt-16 space-y-px">
-              {destinations.map((d, i) => {
-                const reversed = i % 2 === 1;
-                return (
-                  <Reveal key={d.id}>
-                    <article className="grid grid-cols-1 overflow-hidden border border-white/5 bg-ink-600 lg:grid-cols-2">
-                      {/* Image */}
-                      <div
-                        className={`relative aspect-[4/3] lg:aspect-auto lg:min-h-[460px] ${
-                          reversed ? "lg:order-2" : ""
-                        }`}
-                      >
-                        <Image
-                          src={d.image}
-                          alt={d.title}
-                          fill
-                          quality={90}
-                          sizes="(min-width: 1024px) 50vw, 100vw"
-                          className="object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent" />
-                      </div>
-
-                      {/* Text */}
-                      <div className={`p-9 md:p-12 lg:p-14 ${reversed ? "lg:order-1" : ""}`}>
-                        <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-gold">
-                          {d.eyebrow}
-                        </p>
-                        <h3 className="mt-5 font-serif text-4xl font-light leading-tight text-gold md:text-5xl">
-                          {d.title}
-                        </h3>
-
-                        <div className="mt-8">
-                          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-gold/70">
-                            На русском
-                          </p>
-                          <p className="mt-3 font-sans text-[13px] font-light leading-[1.9] text-muted-400">
-                            {d.body_ru}
-                          </p>
-                        </div>
-
-                        <div className="mt-7">
-                          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-gold/70">
-                            In English
-                          </p>
-                          <p className="mt-3 font-sans text-[13px] font-light leading-[1.9] text-muted-400">
-                            {d.body_en}
-                          </p>
-                        </div>
-
-                        <div className="mt-8 max-w-xs">
-                          <BookTour tourId={0} tourTitle={`VIP — ${d.title}`} ui={ui} />
-                        </div>
-                      </div>
-                    </article>
-                  </Reveal>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Services */}
       <section className="bg-ink-600 py-24 md:py-32">

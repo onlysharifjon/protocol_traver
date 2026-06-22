@@ -4,6 +4,7 @@ import Reveal from "@/components/Reveal";
 import { getSettings, getDestinations } from "@/lib/queries";
 import { getLang } from "@/lib/locale";
 import { t } from "@/lib/i18n";
+import { slugForName } from "@/lib/destination-guides";
 
 export const metadata = {
   title: "Destinations — Protocol",
@@ -20,11 +21,12 @@ const aspectBySpan: Record<string, string> = {
 };
 
 function DestinationCard({ d, ui }: { d: Destination; ui: UI }) {
+  // Cities with a full guide page link to it; others fall back to the
+  // filtered tours list.
+  const slug = slugForName(d.name);
+  const href = slug ? `/destinations/${slug}` : `/tours?dest=${encodeURIComponent(d.name)}`;
   return (
-    <Link
-      href={`/tours?dest=${encodeURIComponent(d.name)}`}
-      className="group relative block overflow-hidden"
-    >
+    <Link href={href} className="group relative block overflow-hidden">
       <div className={`relative w-full ${aspectBySpan[d.span] ?? "aspect-[4/5]"}`}>
         <Image
           src={d.image}

@@ -125,13 +125,13 @@ export const SETTING_KEY_GROUP: [string, string][] = [
 const ru: SiteContent = {
   nav: [
     { label: "Туры", href: "/tours" },
+    { label: "MICE и мероприятия", href: "/mice-events" },
     { label: "Направления", href: "/destinations" },
     { label: "О нас", href: "/about" },
     { label: "Документы", href: "/documents" },
-    { label: "MICE и мероприятия", href: "/mice-events" },
-    { label: "Услуги", href: "/services" },
-    { label: "VIP-услуги", href: "/vip-services" },
     { label: "Контакты", href: "#contact" },
+    { label: "VIP услуги", href: "/vip-services" },
+    { label: "Услуги", href: "/services" },
   ],
   contact: {
     email: "travel@protocoluz.com",
@@ -281,13 +281,13 @@ const ru: SiteContent = {
 const en: SiteContent = {
   nav: [
     { label: "Tours", href: "/tours" },
+    { label: "MICE & Events", href: "/mice-events" },
     { label: "Destinations", href: "/destinations" },
     { label: "About", href: "/about" },
     { label: "Documents", href: "/documents" },
-    { label: "MICE & Events", href: "/mice-events" },
-    { label: "Services", href: "/services" },
-    { label: "VIP Services", href: "/vip-services" },
     { label: "Contact", href: "#contact" },
+    { label: "VIP Services", href: "/vip-services" },
+    { label: "Services", href: "/services" },
   ],
   contact: {
     email: "travel@protocoluz.com",
