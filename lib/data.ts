@@ -131,7 +131,6 @@ const ru: SiteContent = {
     { label: "Документы", href: "/documents" },
     { label: "Контакты", href: "#contact" },
     { label: "VIP услуги", href: "/vip-services" },
-    { label: "Услуги", href: "/services" },
   ],
   contact: {
     email: "travel@protocoluz.com",
@@ -287,7 +286,6 @@ const en: SiteContent = {
     { label: "Documents", href: "/documents" },
     { label: "Contact", href: "#contact" },
     { label: "VIP Services", href: "/vip-services" },
-    { label: "Services", href: "/services" },
   ],
   contact: {
     email: "travel@protocoluz.com",
