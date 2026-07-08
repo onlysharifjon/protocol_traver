@@ -52,6 +52,7 @@ export type SiteContent = {
       issued: string;
       status: string;
       statusType: DocStatus;
+      file?: string;
     }[];
   }[];
   footerColumns: { title: string; links: string[] }[];
@@ -195,13 +196,35 @@ const ru: SiteContent = {
   documentGroups: [
     {
       title: "Лицензии туроператора",
-      intro: "Государственные лицензии, дающие Protocol Travel Services право осуществлять въездную туристическую деятельность на территории Республики Узбекистан.",
-      docs: [],
+      intro: "Государственная лицензия, дающая Protocol Travel право осуществлять туроператорскую деятельность на территории Республики Узбекистан.",
+      docs: [
+        {
+          type: "PDF",
+          title: "Лицензия на туристическую деятельность",
+          subtitle: "№1665494 · Внутренний, выездной и въездной туризм",
+          issuer: "Комитет по туризму города Ташкента",
+          issued: "Выдана 24 июня 2026",
+          status: "Активна · бессрочно",
+          statusType: "valid",
+          file: "/documents/protocol-license.pdf",
+        },
+      ],
     },
     {
-      title: "Сертификаты качества",
-      intro: "Международные сертификаты обеспечения качества, подтверждающие приверженность Protocol стандартам обслуживания, ответственному туризму и безопасности гостей.",
-      docs: [],
+      title: "Свидетельство о регистрации",
+      intro: "Свидетельство о государственной регистрации юридического лица ООО «PROTOCOL TRAVEL».",
+      docs: [
+        {
+          type: "PDF",
+          title: "Свидетельство о государственной регистрации",
+          subtitle: "ООО «PROTOCOL TRAVEL» · ИНН 313112865",
+          issuer: "Яккасарайский район, город Ташкент",
+          issued: "17 июня 2026",
+          status: "Подтверждено",
+          statusType: "valid",
+          file: "/documents/protocol-registration.pdf",
+        },
+      ],
     },
     {
       title: "Членство в ассоциациях",
@@ -350,13 +373,35 @@ const en: SiteContent = {
   documentGroups: [
     {
       title: "Tour Operator Licenses",
-      intro: "State-issued operating licenses authorising Protocol Travel Services to conduct inbound tourism activities within the Republic of Uzbekistan.",
-      docs: [],
+      intro: "State-issued licence authorising Protocol Travel to conduct tour-operator activities within the Republic of Uzbekistan.",
+      docs: [
+        {
+          type: "PDF",
+          title: "Tourism Activity Licence",
+          subtitle: "No. 1665494 · Domestic, outbound & inbound tourism",
+          issuer: "Tashkent City Tourism Committee",
+          issued: "Issued 24 June 2026",
+          status: "Active · indefinite",
+          statusType: "valid",
+          file: "/documents/protocol-license.pdf",
+        },
+      ],
     },
     {
-      title: "Quality Certificates",
-      intro: "International quality assurance certifications recognising Protocol's commitment to service standards, responsible tourism, and guest safety.",
-      docs: [],
+      title: "Certificate of Registration",
+      intro: "Certificate of state registration of the legal entity Protocol Travel LLC.",
+      docs: [
+        {
+          type: "PDF",
+          title: "Certificate of State Registration",
+          subtitle: "Protocol Travel LLC · TIN 313112865",
+          issuer: "Yakkasaray District, Tashkent",
+          issued: "17 June 2026",
+          status: "Confirmed",
+          statusType: "valid",
+          file: "/documents/protocol-registration.pdf",
+        },
+      ],
     },
     {
       title: "Association Memberships",

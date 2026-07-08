@@ -112,7 +112,7 @@ export function getDocumentGroups(lang: Locale = DEFAULT_LOCALE) {
     .prepare("SELECT id, title, intro FROM doc_groups WHERE lang = ? ORDER BY position, id")
     .all(lang) as { id: number; title: string; intro: string }[];
   const docStmt = db.prepare(
-    "SELECT type, title, subtitle, issuer, issued, status, status_type AS statusType FROM documents WHERE group_id = ? ORDER BY position, id"
+    "SELECT type, title, subtitle, issuer, issued, status, status_type AS statusType, file FROM documents WHERE group_id = ? ORDER BY position, id"
   );
   return groups.map((g) => {
     const docs = docStmt.all(g.id) as {
@@ -123,6 +123,7 @@ export function getDocumentGroups(lang: Locale = DEFAULT_LOCALE) {
       issued: string;
       status: string;
       statusType: string;
+      file: string;
     }[];
     const n = docs.length;
     const count =

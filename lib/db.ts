@@ -55,11 +55,64 @@ function createConnection(): Database.Database {
   db.pragma("foreign_keys = ON");
   migrateLegacySchema(db);
   initSchema(db);
+  migrateDocumentsFile(db);
   seedIfEmpty(db);
   seedNavItems(db);
+  rebuildDocuments(db);
   seedItineraries(db);
   seedVipDestinations(db);
   return db;
+}
+
+// Add the `file` column to `documents` on pre-existing databases.
+function migrateDocumentsFile(db: Database.Database) {
+  const hasTable = db
+    .prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='documents'")
+    .get();
+  if (hasTable && !columnExists(db, "documents", "file")) {
+    db.exec("ALTER TABLE documents ADD COLUMN file TEXT NOT NULL DEFAULT ''");
+  }
+}
+
+// Rebuild doc_groups + documents from `content` once, so the real licence /
+// registration documents (and their downloadable PDFs) replace the earlier
+// placeholder seed even on databases that were already populated. Guarded by a
+// version flag so it runs exactly once per version bump.
+const DOCS_VERSION = "2";
+function rebuildDocuments(db: Database.Database) {
+  const tx = db.transaction(() => {
+    const flag = db
+      .prepare("SELECT value FROM settings WHERE key = '__docs_version' AND lang = 'ru'")
+      .get() as { value: string } | undefined;
+    if (flag?.value === DOCS_VERSION) return;
+
+    db.exec("DELETE FROM documents");
+    db.exec("DELETE FROM doc_groups");
+
+    const groupStmt = db.prepare(
+      "INSERT INTO doc_groups (lang, position, title, intro) VALUES (?, ?, ?, ?)"
+    );
+    const docStmt = db.prepare(
+      `INSERT INTO documents
+        (lang, group_id, position, type, title, subtitle, issuer, issued, status, status_type, file)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    );
+    for (const lang of LOCALES as Locale[]) {
+      content[lang].documentGroups.forEach((g, gi) => {
+        const info = groupStmt.run(lang, gi, g.title, g.intro);
+        const gid = Number(info.lastInsertRowid);
+        g.docs.forEach((d, di) =>
+          docStmt.run(lang, gid, di, d.type, d.title, d.subtitle, d.issuer, d.issued, d.status, d.statusType, d.file ?? "")
+        );
+      });
+    }
+
+    db.prepare(
+      "INSERT INTO settings (key, lang, value, grp) VALUES ('__docs_version', 'ru', ?, 'system') " +
+        "ON CONFLICT(key, lang) DO UPDATE SET value = excluded.value"
+    ).run(DOCS_VERSION);
+  });
+  tx.exclusive();
 }
 
 // --- Nav items seed (idempotent; runs even on a pre-existing DB) ---
@@ -418,7 +471,8 @@ function initSchema(db: Database.Database) {
       issuer TEXT NOT NULL,
       issued TEXT NOT NULL,
       status TEXT NOT NULL,
-      status_type TEXT NOT NULL DEFAULT 'valid'
+      status_type TEXT NOT NULL DEFAULT 'valid',
+      file TEXT NOT NULL DEFAULT ''
     );
     CREATE TABLE IF NOT EXISTS footer_columns (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -558,7 +612,7 @@ function seedIfEmpty(db: Database.Database) {
     const partStmt = ins("partners", ["lang", "position", "name"]);
     const groupStmt = ins("doc_groups", ["lang", "position", "title", "intro"]);
     const docStmt = ins("documents", [
-      "lang", "group_id", "position", "type", "title", "subtitle", "issuer", "issued", "status", "status_type",
+      "lang", "group_id", "position", "type", "title", "subtitle", "issuer", "issued", "status", "status_type", "file",
     ]);
     const colStmt = ins("footer_columns", ["lang", "position", "title"]);
     const linkStmt = ins("footer_links", ["lang", "column_id", "position", "label", "href"]);
@@ -590,7 +644,7 @@ function seedIfEmpty(db: Database.Database) {
         const info = groupStmt.run(lang, gi, g.title, g.intro);
         const gid = Number(info.lastInsertRowid);
         g.docs.forEach((d, di) =>
-          docStmt.run(lang, gid, di, d.type, d.title, d.subtitle, d.issuer, d.issued, d.status, d.statusType)
+          docStmt.run(lang, gid, di, d.type, d.title, d.subtitle, d.issuer, d.issued, d.status, d.statusType, d.file ?? "")
         );
       });
 

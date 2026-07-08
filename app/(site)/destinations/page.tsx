@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import { getSettings, getDestinations } from "@/lib/queries";
@@ -28,11 +27,13 @@ function DestinationCard({ d, ui }: { d: Destination; ui: UI }) {
   return (
     <Link href={href} className="group relative block overflow-hidden">
       <div className={`relative w-full ${aspectBySpan[d.span] ?? "aspect-[4/5]"}`}>
-        <Image
-          src={d.image}
-          alt={d.name}
-          fill
-          className="object-cover transition-transform duration-[1400ms] group-hover:scale-105"
+        {/* Background image via CSS so any admin-uploaded file (any format)
+            renders reliably without the next/image optimiser. */}
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-[1400ms] group-hover:scale-105"
+          style={{ backgroundImage: `url("${d.image}")` }}
+          role="img"
+          aria-label={d.name}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-ink/10" />
       </div>

@@ -94,14 +94,25 @@ export default function DocumentsPage() {
                       </div>
                     </div>
 
-                    <div className="flex shrink-0 items-center gap-6">
-                      <button className="font-sans text-[9px] uppercase tracking-[0.25em] text-muted-700 transition-colors hover:text-cream">
-                        {ui.docView}
-                      </button>
-                      <button className="flex items-center gap-2 border border-gold/30 px-5 py-3 font-sans text-[9px] uppercase tracking-[0.25em] text-gold transition-colors hover:bg-gold hover:text-ink">
-                        ↓ {ui.docDownload}
-                      </button>
-                    </div>
+                    {doc.file ? (
+                      <div className="flex shrink-0 items-center gap-6">
+                        <a
+                          href={doc.file}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-sans text-[9px] uppercase tracking-[0.25em] text-muted-700 transition-colors hover:text-cream"
+                        >
+                          {ui.docView}
+                        </a>
+                        <a
+                          href={doc.file}
+                          download
+                          className="flex items-center gap-2 border border-gold/30 px-5 py-3 font-sans text-[9px] uppercase tracking-[0.25em] text-gold transition-colors hover:bg-gold hover:text-ink"
+                        >
+                          ↓ {ui.docDownload}
+                        </a>
+                      </div>
+                    ) : null}
                   </div>
                 ))}
               </div>

@@ -162,6 +162,7 @@ export const RESOURCES: Resource[] = [
       { name: "issued", label: "Issued", type: "text" },
       { name: "status", label: "Status text", type: "text" },
       { name: "status_type", label: "Status type", type: "select", options: ["valid", "expired", "ongoing"] },
+      { name: "file", label: "File (e.g. /documents/licence.pdf)", type: "text" },
       positionField,
     ],
   },

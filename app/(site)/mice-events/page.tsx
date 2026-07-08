@@ -76,8 +76,8 @@ export default function MiceEventsPage() {
           <Reveal delay={120}>
             <div className="relative aspect-[3/4] w-full overflow-hidden">
               <Image
-                src="/images/dest-tashkent.jpg"
-                alt="Tashkent — modern conference and events capital"
+                src="/images/mice-memorial.jpg"
+                alt="Uzbekistan — a setting for prestigious events and ceremonies"
                 fill
                 quality={90}
                 sizes="(min-width: 1024px) 460px, 100vw"
