@@ -25,7 +25,9 @@ export default function LoginPage({
         >
           {searchParams.error && (
             <p className="border border-danger/40 bg-danger/10 px-4 py-3 text-center font-sans text-xs text-danger">
-              Incorrect username or password
+              {searchParams.error === "rate"
+                ? "Too many attempts — try again in 15 minutes"
+                : "Incorrect username or password"}
             </p>
           )}
           <div>

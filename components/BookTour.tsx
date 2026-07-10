@@ -103,6 +103,15 @@ export default function BookTour({
                 <form onSubmit={handleSubmit} className="mt-7 space-y-4">
                   <input type="hidden" name="tour_id" value={tourId} />
                   <input type="hidden" name="tour_title" value={tourTitle} />
+                  {/* Honeypot: invisible to people, filled by spam bots */}
+                  <input
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="absolute -left-[9999px] h-0 w-0 opacity-0"
+                  />
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <Field name="first_name" label={ui.firstName} />

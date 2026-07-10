@@ -3,8 +3,19 @@ export const SESSION_COOKIE = "pa_session";
 
 const enc = new TextEncoder();
 
+// Sessions are valid this long; older tokens are rejected even if the cookie
+// still exists (a stolen token cannot be replayed forever).
+export const SESSION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
 function secret(): string {
-  return process.env.SESSION_SECRET ?? "dev-insecure-secret";
+  const s = process.env.SESSION_SECRET;
+  if (!s) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("SESSION_SECRET is not set");
+    }
+    return "dev-insecure-secret";
+  }
+  return s;
 }
 
 function toHex(buf: ArrayBuffer): string {
@@ -45,6 +56,16 @@ export async function createSessionToken(user: string): Promise<string> {
   return `${body}.${sig}`;
 }
 
+// Edge-safe base64url decode (atob exists in both Edge and Node runtimes).
+function fromB64url(s: string): string | null {
+  try {
+    const b64 = s.replace(/-/g, "+").replace(/_/g, "/");
+    return atob(b64);
+  } catch {
+    return null;
+  }
+}
+
 export async function verifySessionToken(
   token: string | undefined
 ): Promise<boolean> {
@@ -55,7 +76,13 @@ export async function verifySessionToken(
   const sig = token.slice(dot + 1);
   if (!sig) return false;
   const expected = await hmac(body);
-  return safeEqual(sig, expected);
+  if (!safeEqual(sig, expected)) return false;
+  // Signature is good — now enforce expiry from the signed payload.
+  const payload = fromB64url(body);
+  if (!payload) return false;
+  const issuedAt = Number(payload.slice(payload.lastIndexOf(".") + 1));
+  if (!Number.isFinite(issuedAt)) return false;
+  return Date.now() - issuedAt < SESSION_MAX_AGE_MS;
 }
 
 export function verifyCredentials(user: string, pass: string): boolean {

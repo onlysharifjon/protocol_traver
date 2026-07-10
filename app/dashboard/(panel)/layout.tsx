@@ -3,16 +3,19 @@ import Sidebar from "@/components/dashboard/Sidebar";
 import LangSwitcher from "@/components/LangSwitcher";
 import ThemeSwitcher from "@/components/dashboard/ThemeSwitcher";
 import { getAdminLang, getAdminTheme } from "@/lib/locale";
+import { requireAuth } from "@/lib/require-auth";
 import { logout } from "../actions";
 
 export const metadata = { title: "Dashboard — Protocol" };
 export const dynamic = "force-dynamic";
 
-export default function PanelLayout({
+export default async function PanelLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Middleware also guards /dashboard, but never rely on it alone.
+  await requireAuth();
   const adminLang = getAdminLang();
   const adminTheme = getAdminTheme();
   return (

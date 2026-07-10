@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getOrders } from "@/lib/queries";
+import { requireAuth } from "@/lib/require-auth";
 import { logout } from "../dashboard/actions";
 import { toggleOrderStatus, deleteOrder } from "./actions";
 
@@ -12,7 +13,9 @@ function formatDate(s: string) {
   return `${date} ${time.slice(0, 5)}`.trim();
 }
 
-export default function AdminOrdersPage() {
+export default async function AdminOrdersPage() {
+  // Middleware also guards /admin, but never rely on it alone.
+  await requireAuth();
   const orders = getOrders();
   const newCount = orders.filter((o) => o.status !== "done").length;
 
