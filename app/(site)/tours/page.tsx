@@ -6,9 +6,22 @@ import { getSettings, getTours, getItineraries } from "@/lib/queries";
 import { getLang } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 
-export const metadata = {
-  title: "Tours & Expeditions — Protocol",
-};
+import { localizedMeta } from "@/lib/page-meta";
+
+export function generateMetadata() {
+  return localizedMeta({
+    ru: {
+      title: "Туры и программы",
+      description:
+        "Частные туры по Узбекистану и Шёлковому пути: авторские маршруты по Самарканду, Бухаре, Хиве и Ташкенту с личным гидом и полным сопровождением.",
+    },
+    en: {
+      title: "Tours & Expeditions",
+      description:
+        "Private tours of Uzbekistan and the Silk Road: bespoke itineraries through Samarkand, Bukhara, Khiva and Tashkent with a private guide and full support.",
+    },
+  });
+}
 export const dynamic = "force-dynamic";
 
 export default function ToursPage({

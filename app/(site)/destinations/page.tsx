@@ -5,9 +5,22 @@ import { getLang } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { slugForName } from "@/lib/destination-guides";
 
-export const metadata = {
-  title: "Destinations — Protocol",
-};
+import { localizedMeta } from "@/lib/page-meta";
+
+export function generateMetadata() {
+  return localizedMeta({
+    ru: {
+      title: "Направления",
+      description:
+        "Самарканд, Бухара, Хива и Ташкент: направления частных путешествий по Шёлковому пути с ультра-премиальным туроператором Узбекистана.",
+    },
+    en: {
+      title: "Destinations",
+      description:
+        "Samarkand, Bukhara, Khiva and Tashkent: private Silk Road destinations with Uzbekistan's ultra-premium tour operator.",
+    },
+  });
+}
 export const dynamic = "force-dynamic";
 
 type Destination = ReturnType<typeof getDestinations>[number];
@@ -35,7 +48,6 @@ function DestinationCard({ d, ui }: { d: Destination; ui: UI }) {
           role="img"
           aria-label={d.name}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-ink/10" />
       </div>
 
       <span className="absolute right-5 top-5 font-sans text-[9px] uppercase tracking-[0.25em] text-gold">

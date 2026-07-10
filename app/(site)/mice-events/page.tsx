@@ -3,9 +3,22 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import { getLang } from "@/lib/locale";
 
-export const metadata = {
-  title: "MICE & Events — Protocol",
-};
+import { localizedMeta } from "@/lib/page-meta";
+
+export function generateMetadata() {
+  return localizedMeta({
+    ru: {
+      title: "MICE и мероприятия",
+      description:
+        "Корпоративные поездки, конференции и частные мероприятия в Узбекистане: полная организация под ключ от DMC-оператора Protocol.",
+    },
+    en: {
+      title: "MICE & Events",
+      description:
+        "Corporate trips, conferences and private events in Uzbekistan: full turnkey organisation by DMC operator Protocol.",
+    },
+  });
+}
 export const dynamic = "force-dynamic";
 
 // Self-contained bilingual copy for this page (nav entry is managed from the

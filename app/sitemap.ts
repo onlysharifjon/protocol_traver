@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getItineraries } from "@/lib/queries";
+import { guideSlugs } from "@/lib/destination-guides";
 
 const SITE = "https://protocoldmc.com";
 
@@ -16,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/vip-services", priority: 0.8, freq: "monthly" },
     { path: "/mice-events", priority: 0.7, freq: "monthly" },
     { path: "/about", priority: 0.6, freq: "monthly" },
+    { path: "/contact", priority: 0.6, freq: "yearly" },
     { path: "/documents", priority: 0.4, freq: "yearly" },
   ];
 
@@ -39,6 +41,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.7,
+    });
+  }
+
+  // Editorial destination guide pages.
+  for (const slug of guideSlugs) {
+    entries.push({
+      url: `${SITE}/destinations/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
     });
   }
 

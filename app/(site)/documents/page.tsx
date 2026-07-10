@@ -3,9 +3,22 @@ import { getSettings, getDocumentGroups } from "@/lib/queries";
 import { getLang } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 
-export const metadata = {
-  title: "Licenses & Certifications — Protocol",
-};
+import { localizedMeta } from "@/lib/page-meta";
+
+export function generateMetadata() {
+  return localizedMeta({
+    ru: {
+      title: "Лицензии и сертификаты",
+      description:
+        "Официальные лицензии, сертификаты и документы туроператора Protocol Travel Services — работаем прозрачно и в полном соответствии с законодательством.",
+    },
+    en: {
+      title: "Licenses & Certifications",
+      description:
+        "Official licences, certificates and documents of Protocol Travel Services — operating transparently and in full legal compliance.",
+    },
+  });
+}
 export const dynamic = "force-dynamic";
 
 const statusStyles: Record<string, string> = {
