@@ -61,6 +61,9 @@ function createConnection(): Database.Database {
   rebuildDocuments(db);
   seedItineraries(db);
   seedVipDestinations(db);
+  seedVipServices(db);
+  seedVipSettings(db);
+  seedAboutSettings(db);
   return db;
 }
 
@@ -209,6 +212,197 @@ function seedVipDestinations(db: Database.Database) {
        VALUES ('ru', @position, @eyebrow, @title, @body_ru, @body_en, @image)`
     );
     VIP_DESTINATIONS.forEach((d, i) => stmt.run({ ...d, position: i }));
+  });
+  tx.exclusive();
+}
+
+// --- VIP service cards seed (idempotent) ---
+const VIP_SERVICES: {
+  num: string;
+  title_ru: string; title_en: string;
+  tag_ru: string; tag_en: string;
+  body_ru: string; body_en: string;
+  details_ru: string; details_en: string;
+}[] = [
+  {
+    num: "01",
+    title_ru: "Консьерж-сервис 24/7", title_en: "24/7 Concierge Service",
+    tag_ru: "Персональный менеджер", tag_en: "Personal manager",
+    body_ru: "За каждым гостем закрепляется персональный менеджер, доступный круглосуточно на протяжении всего путешествия. Любая просьба — от столика в ресторане до решения непредвиденной ситуации — выполняется без лишних звонков и ожидания.",
+    body_en: "Every guest is assigned a personal manager, available around the clock throughout the entire journey. Any request — from a restaurant table to resolving the unexpected — is handled without extra calls or waiting.",
+    details_ru: "Бронирование столиков и мест в любое время\nПокупка и доставка товаров по запросу\nРешение нештатных ситуаций на месте\nСвязь на родном языке гостя",
+    details_en: "Table and venue reservations at any hour\nPurchase and delivery of goods on request\nOn-the-spot handling of unforeseen situations\nCommunication in the guest's native language",
+  },
+  {
+    num: "02",
+    title_ru: "VIP-обслуживание в аэропортах", title_en: "Airport VIP Service",
+    tag_ru: "Встреча без очередей", tag_en: "Arrival without queues",
+    body_ru: "Прибытие и вылет — без очередей, формальностей и ожидания. Гость проходит контроль через залы повышенной комфортности, минуя общий поток, и сразу попадает в подготовленный для него автомобиль.",
+    body_en: "Arrival and departure — without queues, formalities or waiting. The guest passes through premium lounges, bypassing the general flow, and steps straight into a car prepared for them.",
+    details_ru: "Сопровождение от трапа до автомобиля\nЗалы повышенной комфортности (VIP / CIP)\nУскоренное прохождение паспортного контроля\nПомощь с багажом и таможенными процедурами",
+    details_en: "Escort from the aircraft steps to the car\nPremium comfort lounges (VIP / CIP)\nFast-track passport control\nAssistance with luggage and customs procedures",
+  },
+  {
+    num: "03",
+    title_ru: "VIP-транспорт", title_en: "VIP Transport",
+    tag_ru: "Полный парк под любой формат", tag_en: "A full fleet for any format",
+    body_ru: "В нашем распоряжении весь спектр транспорта для частных и групповых поездок: представительские седаны, внедорожники, минивэны и автобусы — для любой численности гостей и любого формата маршрута.",
+    body_en: "We have the full range of transport for private and group travel: executive sedans, SUVs, minivans and coaches — for any number of guests and any route format.",
+    details_ru: "Представительские седаны\nВнедорожники для дальних переездов\nМинивэны для небольших групп\nАвтобусы для делегаций",
+    details_en: "Executive sedans\nSUVs for long-distance transfers\nMinivans for small groups\nCoaches for delegations",
+  },
+  {
+    num: "04",
+    title_ru: "Вертолётные экскурсии", title_en: "Helicopter Excursions",
+    tag_ru: "Шёлковый путь с высоты", tag_en: "The Silk Road from above",
+    body_ru: "Купола Регистана, пустыня Кызылкум и крепостные стены Хивы выглядят иначе с высоты птичьего полёта. Мы организуем вертолётные экскурсии и трансферы между городами маршрута для тех, кто ценит время и впечатления одинаково высоко.",
+    body_en: "The domes of Registan, the Kyzylkum desert and the fortress walls of Khiva look different from a bird's-eye view. We arrange helicopter excursions and inter-city transfers for those who value time and impressions equally.",
+    details_ru: "Панорамные облёты исторических городов\nМежгородские трансферы по воздуху\nИндивидуальные маршруты облёта\nКоординация с авиационными властями",
+    details_en: "Panoramic flights over historic cities\nInter-city transfers by air\nBespoke aerial routes\nCoordination with aviation authorities",
+  },
+  {
+    num: "05",
+    title_ru: "Частные самолёты", title_en: "Private Jets",
+    tag_ru: "От разрешений до посадки", tag_en: "From permits to landing",
+    body_ru: "Мы берём на себя всю организацию рейсов на частных самолётах: получение разрешений на полёт и посадку, координацию с аэропортами Узбекистана и подготовку наземного обслуживания к моменту приземления.",
+    body_en: "We take on the entire organisation of private jet flights: obtaining flight and landing permits, coordinating with Uzbekistan's airports and preparing ground handling for the moment of arrival.",
+    details_ru: "Получение разрешений на вход в воздушное пространство\nСлоты на посадку и стоянку воздушного судна\nНаземное обслуживание и топливо\nКоординация экипажа и расписания",
+    details_en: "Airspace entry permits\nLanding and parking slots\nGround handling and fuel\nCrew and schedule coordination",
+  },
+  {
+    num: "06",
+    title_ru: "Программы под запрос", title_en: "Bespoke Programmes",
+    tag_ru: "Маршрут вне каталога", tag_en: "Off-catalogue itineraries",
+    body_ru: "Когда стандартного маршрута недостаточно, мы организуем то, что в него обычно не входит: встречи с дизайнерами и художниками, визиты в частные мастерские и коллекции, закрытые экспозиции и события, подобранные под интересы конкретного гостя.",
+    body_en: "When a standard itinerary isn't enough, we arrange what usually isn't included: meetings with designers and artists, visits to private workshops and collections, closed exhibitions and events curated around a specific guest's interests.",
+    details_ru: "Встречи с дизайнерами и художниками\nВизиты в мастерские и частные коллекции\nДоступ к закрытым экспозициям\nИндивидуальные тематические программы",
+    details_en: "Meetings with designers and artists\nVisits to workshops and private collections\nAccess to closed exhibitions\nIndividual themed programmes",
+  },
+];
+
+function seedVipServices(db: Database.Database) {
+  const tx = db.transaction(() => {
+    const n = db.prepare("SELECT COUNT(*) AS n FROM vip_services").get() as { n: number };
+    if (n.n > 0) return;
+    const stmt = db.prepare(
+      `INSERT INTO vip_services
+        (position, num, title_ru, title_en, tag_ru, tag_en, body_ru, body_en, details_ru, details_en)
+       VALUES (@position, @num, @title_ru, @title_en, @tag_ru, @tag_en, @body_ru, @body_en, @details_ru, @details_en)`
+    );
+    VIP_SERVICES.forEach((s, i) => stmt.run({ ...s, position: i }));
+  });
+  tx.exclusive();
+}
+
+// --- VIP Services page text seed (idempotent; adds missing keys only) ---
+const VIP_SETTINGS: { key: string; ru: string; en: string }[] = [
+  { key: "vip_eyebrow", ru: "Услуги", en: "Services" },
+  { key: "vip_title1", ru: "Безупречность,", en: "Seamlessness," },
+  { key: "vip_title2", ru: "организованная заранее", en: "arranged in advance" },
+  { key: "vip_intro", ru: "Каждая деталь путешествия — от телефонного звонка до взлёта частного самолёта — продумана и подтверждена прежде, чем вы успеете о ней спросить.", en: "Every detail of the journey — from the first phone call to the take-off of a private jet — is thought through and confirmed before you even think to ask." },
+  { key: "vip_services_eyebrow", ru: "Что мы предлагаем", en: "What we offer" },
+  { key: "vip_services_title1", ru: "Шесть направлений,", en: "Six directions," },
+  { key: "vip_services_title2", ru: "один стандарт", en: "one standard" },
+  { key: "vip_services_intro", ru: "Мы не продаём отдельные услуги — мы выстраиваем вокруг гостя инфраструктуру, в которой не остаётся нерешённых вопросов.", en: "We don't sell isolated services — we build an infrastructure around the guest in which no question is left unresolved." },
+  { key: "vip_quote", ru: "Мы организуем то, что для обычного гостя остаётся за кадром — от разрешения на посадку до встречи с мастером, чьё имя знают немногие.", en: "We arrange what stays off-screen for the ordinary guest — from a landing permit to a meeting with a master whose name few know." },
+  { key: "vip_cta_title", ru: "Расскажите нам, что вам нужно — остальное мы возьмём на себя.", en: "Tell us what you need — we'll take care of the rest." },
+  { key: "vip_cta_button", ru: "Связаться с нами", en: "Get in touch" },
+];
+
+function seedVipSettings(db: Database.Database) {
+  const tx = db.transaction(() => {
+    const ins = db.prepare(
+      "INSERT OR IGNORE INTO settings (key, lang, value, grp) VALUES (?, ?, ?, 'vip')"
+    );
+    for (const s of VIP_SETTINGS) {
+      ins.run(s.key, "ru", s.ru);
+      ins.run(s.key, "en", s.en);
+    }
+  });
+  tx.exclusive();
+}
+
+// --- About page text seed (idempotent) ---
+// The current About page (sections 01–04) is fully described by these keys.
+// Repeating blocks use numbered keys; origin text stores paragraphs split by a
+// blank line. Old keys from the previous About design are removed so the
+// dashboard form shows only fields that map to the live page.
+const ABOUT_SETTINGS: { key: string; ru: string; en: string }[] = [
+  // Hero
+  { key: "about_hero_eyebrow", ru: "О компании", en: "About Us" },
+  { key: "about_hero_title1", ru: "Новый взгляд", en: "A new perspective" },
+  { key: "about_hero_title2", ru: "на ", en: "on " },
+  { key: "about_hero_title_em", ru: "привычное путешествие", en: "familiar travel" },
+  { key: "about_hero_lead", ru: "Protocol Travel Services — одна из первых компаний в Узбекистане, посвятившая себя исключительно VIP-путешествиям.", en: "Protocol Travel Services is one of the first companies in Uzbekistan dedicated exclusively to VIP travel." },
+  // 01 — Who we are
+  { key: "about_s1_num", ru: "01 — Кто мы", en: "01 — Who we are" },
+  { key: "about_s1_title1", ru: "Молодая компания", en: "A young company" },
+  { key: "about_s1_title2", ru: "со ", en: "with " },
+  { key: "about_s1_title_em", ru: "зрелым опытом", en: "seasoned experience" },
+  { key: "about_s1_lead", ru: "Мы не несём на себе груз устаревших процессов индустрии. Каждое решение мы принимаем заново — руководствуясь одним вопросом: достаточно ли это хорошо для нашего гостя.", en: "We don't carry the weight of the industry's outdated processes. Every decision we make anew — guided by a single question: is this good enough for our guest?" },
+  { key: "about_intro1_label", ru: "Позиция", en: "Position" },
+  { key: "about_intro1_text", ru: "Мы — новая компания, и в этом наша сила: мы свободны смотреть на индустрию въездного туризма по-новому, не повторяя чужих шаблонов.", en: "We are a new company, and therein lies our strength: we are free to look at the inbound tourism industry afresh, without repeating anyone else's templates." },
+  { key: "about_intro2_label", ru: "Опыт", en: "Experience" },
+  { key: "about_intro2_text", ru: "За нами стоит команда, чей практический опыт в организации путешествий по Шёлковому пути начинается с 2018 года — годы выстраивания отношений с лучшими гидами и экспертами региона.", en: "Behind us stands a team whose hands-on experience organising Silk Road journeys dates back to 2018 — years of building relationships with the region's finest guides and experts." },
+  { key: "about_intro3_label", ru: "Фокус", en: "Focus" },
+  { key: "about_intro3_text", ru: "Ультра-премиальный въездной туроператор. Не массовый турбизнес — частный сервис для тех, кто воспринимает безупречность как стандарт, а не привилегию.", en: "An ultra-premium inbound tour operator. Not mass tourism — a private service for those who see flawlessness as a standard, not a privilege." },
+  { key: "about_intro4_label", ru: "Подход", en: "Approach" },
+  { key: "about_intro4_text", ru: "Каждый маршрут создаётся вокруг вас: вашего темпа, ваших увлечений, ваших личных встреч с памятниками, что некогда стояли в центре мира.", en: "Every itinerary is built around you: your pace, your passions, your private encounters with monuments that once stood at the centre of the world." },
+  // 02 — Our story
+  { key: "about_s2_num", ru: "02 — Наша история", en: "02 — Our story" },
+  { key: "about_s2_title1", ru: "Опыт начинается", en: "Experience that begins" },
+  { key: "about_s2_title2", ru: "с ", en: "in " },
+  { key: "about_s2_title_em", ru: "2018 года", en: "2018" },
+  { key: "about_origin_year", ru: "2018", en: "2018" },
+  { key: "about_origin_label", ru: "Начало пути команды", en: "The team's beginning" },
+  { key: "about_origin_text", ru: "Protocol Travel Services как компания — новый игрок на рынке. Но люди, которые её создали, годами работали в индустрии частного въездного туризма задолго до основания бренда. Опыт наших основателей и сотрудников в организации путешествий по Шёлковому пути начинается с 2018 года: это годы личных знакомств с гидами-историками, реставраторами и владельцами лучших отелей региона — связи, которые невозможно купить, только выстроить.\n\nМы открыли Protocol, чтобы применить этот опыт без компромиссов массового рынка — без типовых автобусных групп, проходных ресторанов и формальных гидов. Только то, что мы сами хотели бы получить как гости.", en: "Protocol Travel Services as a company is a new player on the market. But the people who created it worked for years in private inbound tourism long before the brand was founded. Our founders' and staff's experience organising Silk Road journeys dates back to 2018: years of personal acquaintance with historian-guides, restorers and owners of the region's finest hotels — connections that cannot be bought, only built.\n\nWe opened Protocol to apply this experience without the compromises of the mass market — no cookie-cutter bus groups, no tourist-trap restaurants, no formal guides. Only what we would want to receive as guests ourselves." },
+  // 03 — Standards
+  { key: "about_s3_num", ru: "03 — Наши стандарты", en: "03 — Our standards" },
+  { key: "about_s3_title1", ru: "Как мы", en: "How we choose" },
+  { key: "about_s3_title2", ru: "отбираем ", en: "our " },
+  { key: "about_s3_title_em", ru: "партнёров", en: "partners" },
+  { key: "about_s3_body", ru: "Мы лично проверяем каждый отель, каждый автомобиль и каждый ресторан, прежде чем предложить их гостю. Никаких комиссионных соглашений по умолчанию и никаких компромиссов «для группы».", en: "We personally inspect every hotel, every car and every restaurant before offering them to a guest. No default commission arrangements and no compromises 'for the group'." },
+  { key: "about_pillar1_title", ru: "Отели", en: "Hotels" },
+  { key: "about_pillar1_text", ru: "Только бутик-резиденции в исторических кварталах и ведущие международные сети — никогда «по умолчанию» или по комиссионной схеме.", en: "Only boutique residences in historic quarters and leading international chains — never 'by default' or on a commission scheme." },
+  { key: "about_pillar2_title", ru: "Транспорт", en: "Transport" },
+  { key: "about_pillar2_text", ru: "Представительские автомобили и минивэны с опытными водителями. Без переполненных автобусов и многочасовых ожиданий между точками маршрута.", en: "Executive cars and minivans with experienced drivers. No overcrowded buses or hours of waiting between stops." },
+  { key: "about_pillar3_title", ru: "Рестораны", en: "Restaurants" },
+  { key: "about_pillar3_text", ru: "Места, где готовят аутентичную узбекскую кухню на высоком уровне — отобранные по личному опыту, а не по туристическому потоку.", en: "Places serving authentic Uzbek cuisine at a high level — chosen from personal experience, not by tourist flow." },
+  // 04 — Difference
+  { key: "about_s4_num", ru: "04 — Чем мы отличаемся", en: "04 — What sets us apart" },
+  { key: "about_s4_title1", ru: "Не то, к чему", en: "Not what" },
+  { key: "about_s4_title2", ru: "вы ", en: "you're " },
+  { key: "about_s4_title_em", ru: "привыкли", en: "used to" },
+  { key: "about_against_label", ru: "Массовый туризм", en: "Mass tourism" },
+  { key: "about_compare1_against", ru: "Группа из 40 человек, фиксированный автобусный маршрут, ресторан «для туристов» с типовым меню на пять языков.", en: "A group of 40, a fixed bus route, a 'tourist' restaurant with a template menu in five languages." },
+  { key: "about_compare1_protocol", ru: "Частный автомобиль, маршрут под ваш темп, ужин в месте, которое мы выбрали бы для себя.", en: "A private car, a route at your own pace, dinner in a place we would choose for ourselves." },
+  { key: "about_compare2_against", ru: "Гид с типовым текстом, который читает один и тот же рассказ десятой группе за день.", en: "A guide with a template script reading the same story to their tenth group of the day." },
+  { key: "about_compare2_protocol", ru: "Гид-историк или искусствовед, который годами работает с реставраторами и учёными Шёлкового пути.", en: "A historian or art-historian guide who has worked for years with restorers and scholars of the Silk Road." },
+  { key: "about_compare3_against", ru: "Отель, выбранный по самой выгодной комиссии для оператора, а не по качеству сервиса.", en: "A hotel chosen for the operator's best commission, not for the quality of service." },
+  { key: "about_compare3_protocol", ru: "Отель, который мы лично проверили и в котором готовы остановиться сами.", en: "A hotel we have personally inspected and would happily stay in ourselves." },
+  // CTA
+  { key: "about_cta_pre", ru: "«Каждый маршрут создаётся ", en: "“Every itinerary is built " },
+  { key: "about_cta_accent", ru: "вокруг вас", en: "around you" },
+  { key: "about_cta_post", ru: " — вашего темпа, ваших увлечений, ваших личных встреч с историей.»", en: " — your pace, your passions, your private encounters with history.”" },
+  { key: "about_cta_button", ru: "Связаться с нами", en: "Get in touch" },
+];
+
+function seedAboutSettings(db: Database.Database) {
+  const tx = db.transaction(() => {
+    const keep = ABOUT_SETTINGS.map((s) => s.key);
+    // Remove stale keys from the previous About design so the admin form only
+    // lists fields that map to the live page (no-op once cleaned).
+    const placeholders = keep.map(() => "?").join(", ");
+    db.prepare(
+      `DELETE FROM settings WHERE grp = 'about' AND key NOT IN (${placeholders})`
+    ).run(...keep);
+    const ins = db.prepare(
+      "INSERT OR IGNORE INTO settings (key, lang, value, grp) VALUES (?, ?, ?, 'about')"
+    );
+    for (const s of ABOUT_SETTINGS) {
+      ins.run(s.key, "ru", s.ru);
+      ins.run(s.key, "en", s.en);
+    }
   });
   tx.exclusive();
 }
@@ -570,6 +764,21 @@ function initSchema(db: Database.Database) {
       body_ru TEXT NOT NULL DEFAULT '',
       body_en TEXT NOT NULL DEFAULT '',
       image TEXT NOT NULL DEFAULT ''
+    );
+    -- VIP service cards (numbered blocks on the VIP Services page).
+    -- Bilingual columns in a single row; details are newline-separated.
+    CREATE TABLE IF NOT EXISTS vip_services (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      position INTEGER NOT NULL DEFAULT 0,
+      num TEXT NOT NULL DEFAULT '',
+      title_ru TEXT NOT NULL DEFAULT '',
+      title_en TEXT NOT NULL DEFAULT '',
+      tag_ru TEXT NOT NULL DEFAULT '',
+      tag_en TEXT NOT NULL DEFAULT '',
+      body_ru TEXT NOT NULL DEFAULT '',
+      body_en TEXT NOT NULL DEFAULT '',
+      details_ru TEXT NOT NULL DEFAULT '',
+      details_en TEXT NOT NULL DEFAULT ''
     );
   `);
 }

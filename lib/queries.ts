@@ -213,12 +213,12 @@ export type ItineraryRow = {
 };
 
 // Summary list for the tours page (one row per programme).
-export function getItineraries() {
+export function getItineraries(lang: Locale = DEFAULT_LOCALE) {
   return db
     .prepare(
-      "SELECT id, slug, theme, title_main, title_accent, subtitle, eyebrow, duration_label, cities_label, image FROM itineraries ORDER BY position, id"
+      "SELECT id, slug, theme, title_main, title_accent, subtitle, eyebrow, duration_label, cities_label, image FROM itineraries WHERE lang = ? ORDER BY position, id"
     )
-    .all() as {
+    .all(lang) as {
     id: number;
     slug: string;
     theme: string;
@@ -292,4 +292,33 @@ export function getVipDestinations(): VipDestination[] {
       "SELECT id, eyebrow, title, body_ru, body_en, image FROM vip_destinations ORDER BY position, id"
     )
     .all() as VipDestination[];
+}
+
+export type VipService = {
+  id: number;
+  num: string;
+  title: string;
+  tag: string;
+  body: string;
+  details: string[];
+};
+// VIP service cards for the given language. Rows store both languages; we pick
+// the columns for `lang` and split the newline-separated details into a list.
+export function getVipServices(lang: Locale = DEFAULT_LOCALE): VipService[] {
+  const rows = db
+    .prepare(
+      "SELECT id, num, title_ru, title_en, tag_ru, tag_en, body_ru, body_en, details_ru, details_en FROM vip_services ORDER BY position, id"
+    )
+    .all() as Record<string, string | number>[];
+  return rows.map((r) => ({
+    id: r.id as number,
+    num: r.num as string,
+    title: (lang === "en" ? r.title_en : r.title_ru) as string,
+    tag: (lang === "en" ? r.tag_en : r.tag_ru) as string,
+    body: (lang === "en" ? r.body_en : r.body_ru) as string,
+    details: ((lang === "en" ? r.details_en : r.details_ru) as string)
+      .split("\n")
+      .map((d) => d.trim())
+      .filter(Boolean),
+  }));
 }

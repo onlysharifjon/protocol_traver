@@ -2,74 +2,32 @@ import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import { getLang } from "@/lib/locale";
+import { getSettings, getVipServices } from "@/lib/queries";
 
 export const metadata = {
   title: "VIP Services — Protocol",
 };
 export const dynamic = "force-dynamic";
 
-// Self-contained bilingual copy for this page (the nav entry is managed from
-// the admin "Navigation" resource; the page body lives here).
-const copy = {
-  ru: {
-    eyebrow: "VIP-услуги",
-    title1: "Безупречность",
-    title2: "на уровне глав государств",
-    intro:
-      "Протокол высочайшего уровня — наша профессия с 2008 года. Частная авиация, личный консьерж, эксклюзивный доступ и абсолютная конфиденциальность. Мы обслуживаем тех, для кого время дороже всего, а каждая деталь имеет значение.",
-    servicesEyebrow: "Что входит",
-    servicesTitle: "Привилегии",
-    services: [
-      { title: "Частная авиация и трансферы", body: "Бизнес-джеты, вертолёты и автомобили представительского класса с личным водителем на всём маршруте." },
-      { title: "Персональный консьерж", body: "Выделенный менеджер 24/7, который решает любой запрос — от бронирования до невозможного." },
-      { title: "Эксклюзивный доступ", body: "Закрытые показы памятников после часов, частные коллекции и встречи, недоступные обычным гостям." },
-      { title: "Протокол и безопасность", body: "Сопровождение, дипломатический протокол и дискретная охрана от прибытия до отъезда." },
-      { title: "Резиденции класса люкс", body: "Президентские сюиты, дворцовые резиденции и виллы с полным обслуживанием и приватностью." },
-      { title: "Индивидуальные маршруты", body: "Программа, выстроенная вокруг ваших интересов, графика и пожеланий — без единого компромисса." },
-    ],
-    ctaTitle: "Создадим путешествие исключительно для вас",
-    ctaButton: "Связаться с нами",
-  },
-  en: {
-    eyebrow: "VIP Services",
-    title1: "Flawless service",
-    title2: "at head-of-state standard",
-    intro:
-      "Protocol of the highest order has been our craft since 2008. Private aviation, a personal concierge, exclusive access and absolute discretion. We serve those for whom time is the rarest luxury and every detail matters.",
-    servicesEyebrow: "What's included",
-    servicesTitle: "Privileges",
-    services: [
-      { title: "Private Aviation & Transfers", body: "Business jets, helicopters and chauffeured executive cars across your entire itinerary." },
-      { title: "Personal Concierge", body: "A dedicated 24/7 manager who handles any request — from reservations to the seemingly impossible." },
-      { title: "Exclusive Access", body: "After-hours monument viewings, private collections and encounters unavailable to ordinary guests." },
-      { title: "Protocol & Security", body: "Escort, diplomatic protocol and discreet protection from arrival to departure." },
-      { title: "Luxury Residences", body: "Presidential suites, palatial residences and fully serviced villas with complete privacy." },
-      { title: "Bespoke Itineraries", body: "A programme built entirely around your interests, schedule and wishes — without a single compromise." },
-    ],
-    ctaTitle: "A journey crafted for you alone",
-    ctaButton: "Get in touch",
-  },
-};
-
 export default function VipServicesPage() {
   const lang = getLang();
-  const c = copy[lang];
+  const s = getSettings("vip", lang);
+  const services = getVipServices(lang);
 
   return (
     <>
-      {/* Hero — text + portrait image (image shown at a contained width so
-          it stays crisp instead of being upscaled in a full-bleed band) */}
+      {/* Hero — text + portrait image */}
       <section className="bg-ink pb-20 pt-[140px] md:pb-28 md:pt-[190px]">
         <div className="container-x grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_460px] lg:gap-20">
           <Reveal>
-            <p className="eyebrow">{c.eyebrow}</p>
+            <p className="eyebrow">{s.vip_eyebrow}</p>
             <h1 className="mt-6 font-serif text-5xl font-light leading-[1.0] text-cream md:text-6xl lg:text-7xl">
-              {c.title1}
+              {s.vip_title1}
               <br />
-              {c.title2}
+              {s.vip_title2}
             </h1>
             <p className="mt-9 max-w-xl font-sans text-[15px] font-light leading-[1.95] text-muted-400">
-              {c.intro}
+              {s.vip_intro}
             </p>
           </Reveal>
 
@@ -89,42 +47,84 @@ export default function VipServicesPage() {
         </div>
       </section>
 
-      {/* Services */}
+      {/* Services — numbered blocks with tag, body and a details grid */}
       <section className="bg-ink-600 py-24 md:py-32">
         <div className="container-x">
           <Reveal>
-            <p className="eyebrow">{c.servicesEyebrow}</p>
-            <h2 className="mt-6 font-serif text-4xl font-light text-cream md:text-5xl">
-              {c.servicesTitle}
+            <p className="eyebrow">{s.vip_services_eyebrow}</p>
+            <h2 className="mt-6 font-serif text-4xl font-light leading-[1.15] text-cream md:text-5xl">
+              {s.vip_services_title1}
+              <br />
+              <em className="italic text-gold">{s.vip_services_title2}</em>
             </h2>
+            <p className="mt-6 max-w-xl font-sans text-[14px] font-light leading-[1.85] text-muted-400">
+              {s.vip_services_intro}
+            </p>
           </Reveal>
 
-          <div className="mt-16 grid grid-cols-1 gap-x-12 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
-            {c.services.map((s, i) => (
-              <Reveal delay={(i % 3) * 100} key={s.title}>
-                <div className="mb-6 h-px w-12 bg-gold/40" />
-                <h3 className="font-serif text-2xl font-normal text-cream">
-                  {s.title}
-                </h3>
-                <p className="mt-5 font-sans text-[13px] font-light leading-[1.85] text-muted-400">
-                  {s.body}
-                </p>
+          <div className="mt-20">
+            {services.map((sv, i) => (
+              <Reveal key={sv.id}>
+                <div
+                  className={`grid grid-cols-1 gap-8 border-gold/15 pb-14 md:grid-cols-[90px_1fr] ${
+                    i < services.length - 1 ? "mb-14 border-b" : ""
+                  }`}
+                >
+                  <div className="font-serif text-4xl font-light leading-none text-gold/25">
+                    {sv.num}
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-2xl font-normal text-cream">
+                      {sv.title}
+                    </h3>
+                    <p className="mt-2 font-sans text-[9px] uppercase tracking-[0.25em] text-gold">
+                      {sv.tag}
+                    </p>
+                    <p className="mt-5 max-w-2xl font-sans text-[14px] font-light leading-[1.85] text-muted-400">
+                      {sv.body}
+                    </p>
+                    <div className="mt-6 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-3 md:grid-cols-2">
+                      {sv.details.map((d) => (
+                        <div
+                          key={d}
+                          className="flex items-baseline gap-3 font-sans text-[12px] font-light leading-[1.6] text-muted-400"
+                        >
+                          <span className="shrink-0 text-gold">—</span>
+                          {d}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Quote */}
+      <section className="bg-ink py-20 md:py-28">
+        <div className="container-x">
+          <Reveal>
+            <div className="border border-gold/15 bg-ink-600 p-10 md:p-14">
+              <p className="max-w-3xl font-serif text-xl font-light italic leading-[1.55] text-cream md:text-2xl">
+                «{s.vip_quote}»
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* CTA */}
-      <section className="bg-ink py-28 md:py-36">
+      <section className="bg-ink pb-28 md:pb-36">
         <div className="container-x text-center">
           <Reveal>
-            <h2 className="mx-auto max-w-2xl font-serif text-4xl font-light text-cream md:text-5xl">
-              {c.ctaTitle}
+            <h2 className="mx-auto max-w-2xl font-serif text-4xl font-light italic text-cream md:text-5xl">
+              {s.vip_cta_title}
             </h2>
             <div className="mt-12">
               <Link href="#contact" className="btn-ghost">
-                {c.ctaButton}
+                {s.vip_cta_button}
               </Link>
             </div>
           </Reveal>

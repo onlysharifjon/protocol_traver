@@ -28,7 +28,7 @@ export default function ToursPage({
   // so the page is never empty.
   const tours = dest && matched.length > 0 ? matched : allTours;
 
-  const itineraries = getItineraries();
+  const itineraries = getItineraries(lang);
 
   const filters = [
     { label: ui.filterDestination, value: dest || ui.allDestinations },
@@ -97,9 +97,11 @@ export default function ToursPage({
         <section className="bg-ink pb-24">
           <div className="container-x">
             <Reveal>
-              <p className="eyebrow">Программы по дням</p>
+              <p className="eyebrow">
+                {lang === "en" ? "Day-by-day programmes" : "Программы по дням"}
+              </p>
               <h2 className="mt-4 font-serif text-3xl font-light text-cream md:text-4xl">
-                Авторские маршруты
+                {lang === "en" ? "Signature itineraries" : "Авторские маршруты"}
               </h2>
             </Reveal>
             <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -125,7 +127,7 @@ export default function ToursPage({
                           {it.duration_label}
                         </span>
                         <span className="link-underline font-sans text-[9px] uppercase tracking-[0.25em] text-gold">
-                          Смотреть программу →
+                          {lang === "en" ? "View programme →" : "Смотреть программу →"}
                         </span>
                       </div>
                     </Link>
@@ -150,7 +152,7 @@ export default function ToursPage({
                     fill
                     className="object-cover transition-transform duration-[1200ms] group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-ink/60 to-transparent" />
                   <div className="absolute left-4 top-4 flex items-center gap-3">
                     <span className="font-sans text-[8px] uppercase tracking-[0.3em] text-gold">
                       {tour.category}
