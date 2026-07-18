@@ -260,10 +260,14 @@ export type ItineraryDay = {
 };
 
 // Full programme by slug, with nested days and blocks.
-export function getItinerary(slug: string) {
+// Prefers the requested language and falls back to Russian rows so a
+// not-yet-translated programme still renders.
+export function getItinerary(slug: string, lang: Locale = DEFAULT_LOCALE) {
   const itin = db
-    .prepare("SELECT * FROM itineraries WHERE slug = ? ORDER BY position, id LIMIT 1")
-    .get(slug) as ItineraryRow | undefined;
+    .prepare(
+      "SELECT * FROM itineraries WHERE slug = ? ORDER BY (lang = ?) DESC, position, id LIMIT 1"
+    )
+    .get(slug, lang) as ItineraryRow | undefined;
   if (!itin) return null;
 
   const days = db

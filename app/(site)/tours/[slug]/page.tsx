@@ -10,7 +10,7 @@ import "./itinerary.css";
 export const dynamic = "force-dynamic";
 
 export function generateMetadata({ params }: { params: { slug: string } }) {
-  const data = getItinerary(params.slug);
+  const data = getItinerary(params.slug, getLang());
   if (!data) return { title: "Tour — Protocol" };
   const { itin } = data;
   const title = [itin.title_main, itin.title_accent].filter(Boolean).join(" ");
@@ -24,11 +24,11 @@ export default function ItineraryPage({
   params: { slug: string };
   searchParams: { theme?: string };
 }) {
-  const data = getItinerary(params.slug);
+  const lang = getLang();
+  const data = getItinerary(params.slug, lang);
   if (!data) notFound();
   const { itin, days } = data;
 
-  const lang = getLang();
   const ui = t(lang);
   const tourTitle = [itin.title_main, itin.title_accent].filter(Boolean).join(" ");
 
