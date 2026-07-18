@@ -30,6 +30,22 @@ export default function Header({
 
   useEffect(() => setOpen(false), [pathname]);
 
+  // Hash links (e.g. "#contact" → the footer) live on every page via the
+  // layout. next/link treats a bare "#hash" as a soft navigation and skips the
+  // browser's default scroll, so we scroll to the target ourselves.
+  const handleHashClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    if (!href.startsWith("#")) return;
+    const el = document.getElementById(href.slice(1));
+    if (!el) return; // let the browser handle it if the target isn't here
+    e.preventDefault();
+    setOpen(false);
+    el.scrollIntoView({ behavior: "smooth" });
+    history.replaceState(null, "", href);
+  };
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
@@ -62,6 +78,7 @@ export default function Header({
               <Link
                 key={item.label}
                 href={item.href}
+                onClick={(e) => handleHashClick(e, item.href)}
                 className={`whitespace-nowrap font-sans text-[11px] uppercase tracking-[0.16em] transition-colors duration-300 hover:text-gold ${
                   active ? "text-gold" : "text-cream"
                 }`}
@@ -119,6 +136,7 @@ export default function Header({
               <Link
                 key={item.label}
                 href={item.href}
+                onClick={(e) => handleHashClick(e, item.href)}
                 className={`border-b border-white/5 py-4 font-sans text-xs uppercase tracking-[0.2em] transition-colors hover:text-gold ${
                   active ? "text-gold" : "text-cream"
                 }`}

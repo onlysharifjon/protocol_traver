@@ -298,6 +298,25 @@ export const RESOURCES: Resource[] = [
       positionField,
     ],
   },
+  {
+    slug: "vip-services",
+    table: "vip_services",
+    title: "VIP Service",
+    titlePlural: "VIP Services (cards)",
+    listColumns: ["num", "title_ru"],
+    fields: [
+      { name: "num", label: "Number (01, 02…)", type: "text" },
+      { name: "title_ru", label: "Title (Russian)", type: "text" },
+      { name: "title_en", label: "Title (English)", type: "text" },
+      { name: "tag_ru", label: "Tag (Russian)", type: "text" },
+      { name: "tag_en", label: "Tag (English)", type: "text" },
+      { name: "body_ru", label: "Description (Russian)", type: "textarea" },
+      { name: "body_en", label: "Description (English)", type: "textarea" },
+      { name: "details_ru", label: "Details — one per line (Russian)", type: "textarea" },
+      { name: "details_en", label: "Details — one per line (English)", type: "textarea" },
+      positionField,
+    ],
+  },
 ];
 
 export function getResource(slug: string): Resource | undefined {
@@ -311,6 +330,7 @@ export const SETTINGS_GROUPS: { slug: string; title: string }[] = [
   { slug: "destinations", title: "Destinations Page Text" },
   { slug: "about", title: "About Page Text" },
   { slug: "documents", title: "Documents Page Text" },
+  { slug: "vip", title: "VIP Services Text" },
   { slug: "brand", title: "Brand" },
   { slug: "contact", title: "Contact Details" },
 ];

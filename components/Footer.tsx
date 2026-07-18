@@ -22,7 +22,7 @@ export default function Footer({
 }) {
   const ui = t(lang);
   return (
-    <footer id="contact" className="border-t border-white/5 bg-ink-900">
+    <footer id="contact" className="scroll-mt-[72px] border-t border-white/5 bg-ink-900">
       <div className="container-x py-20">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand column */}

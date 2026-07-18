@@ -144,7 +144,8 @@
       "Bash(curl -s -o /dev/null -w \"documents: %{http_code}\\\\n\" http://localhost:3002/documents)",
       "Bash(sqlite3 /var/www/protocol_traver/data/protocol.db \"SELECT name FROM sqlite_master WHERE type='table';\")",
       "Bash(sqlite3 data/protocol.db \"SELECT lang, key, substr\\(value,1,60\\) FROM settings WHERE section='about' ORDER BY lang, key;\")",
-      "Bash(sqlite3 data/protocol.db \"SELECT 'timeline', lang, count\\(*\\) FROM timeline GROUP BY lang UNION ALL SELECT 'team', lang, count\\(*\\) FROM team GROUP BY lang UNION ALL SELECT 'partners', lang, count\\(*\\) FROM partners GROUP BY lang;\")"
+      "Bash(sqlite3 data/protocol.db \"SELECT 'timeline', lang, count\\(*\\) FROM timeline GROUP BY lang UNION ALL SELECT 'team', lang, count\\(*\\) FROM team GROUP BY lang UNION ALL SELECT 'partners', lang, count\\(*\\) FROM partners GROUP BY lang;\")",
+      "Bash(git *)"
     ]
   }
 }

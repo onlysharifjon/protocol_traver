@@ -61,6 +61,8 @@ function createConnection(): Database.Database {
   rebuildDocuments(db);
   seedItineraries(db);
   seedVipDestinations(db);
+  seedVipServices(db);
+  seedVipSettings(db);
   return db;
 }
 
@@ -212,6 +214,113 @@ function seedVipDestinations(db: Database.Database) {
   });
   tx.exclusive();
 }
+
+// --- VIP service cards seed (idempotent) ---
+const VIP_SERVICES: {
+  num: string;
+  title_ru: string; title_en: string;
+  tag_ru: string; tag_en: string;
+  body_ru: string; body_en: string;
+  details_ru: string; details_en: string;
+}[] = [
+  {
+    num: "01",
+    title_ru: "Консьерж-сервис 24/7", title_en: "24/7 Concierge Service",
+    tag_ru: "Персональный менеджер", tag_en: "Personal manager",
+    body_ru: "За каждым гостем закрепляется персональный менеджер, доступный круглосуточно на протяжении всего путешествия. Любая просьба — от столика в ресторане до решения непредвиденной ситуации — выполняется без лишних звонков и ожидания.",
+    body_en: "Every guest is assigned a personal manager, available around the clock throughout the entire journey. Any request — from a restaurant table to resolving the unexpected — is handled without extra calls or waiting.",
+    details_ru: "Бронирование столиков и мест в любое время\nПокупка и доставка товаров по запросу\nРешение нештатных ситуаций на месте\nСвязь на родном языке гостя",
+    details_en: "Table and venue reservations at any hour\nPurchase and delivery of goods on request\nOn-the-spot handling of unforeseen situations\nCommunication in the guest's native language",
+  },
+  {
+    num: "02",
+    title_ru: "VIP-обслуживание в аэропортах", title_en: "Airport VIP Service",
+    tag_ru: "Встреча без очередей", tag_en: "Arrival without queues",
+    body_ru: "Прибытие и вылет — без очередей, формальностей и ожидания. Гость проходит контроль через залы повышенной комфортности, минуя общий поток, и сразу попадает в подготовленный для него автомобиль.",
+    body_en: "Arrival and departure — without queues, formalities or waiting. The guest passes through premium lounges, bypassing the general flow, and steps straight into a car prepared for them.",
+    details_ru: "Сопровождение от трапа до автомобиля\nЗалы повышенной комфортности (VIP / CIP)\nУскоренное прохождение паспортного контроля\nПомощь с багажом и таможенными процедурами",
+    details_en: "Escort from the aircraft steps to the car\nPremium comfort lounges (VIP / CIP)\nFast-track passport control\nAssistance with luggage and customs procedures",
+  },
+  {
+    num: "03",
+    title_ru: "VIP-транспорт", title_en: "VIP Transport",
+    tag_ru: "Полный парк под любой формат", tag_en: "A full fleet for any format",
+    body_ru: "В нашем распоряжении весь спектр транспорта для частных и групповых поездок: представительские седаны, внедорожники, минивэны и автобусы — для любой численности гостей и любого формата маршрута.",
+    body_en: "We have the full range of transport for private and group travel: executive sedans, SUVs, minivans and coaches — for any number of guests and any route format.",
+    details_ru: "Представительские седаны\nВнедорожники для дальних переездов\nМинивэны для небольших групп\nАвтобусы для делегаций",
+    details_en: "Executive sedans\nSUVs for long-distance transfers\nMinivans for small groups\nCoaches for delegations",
+  },
+  {
+    num: "04",
+    title_ru: "Вертолётные экскурсии", title_en: "Helicopter Excursions",
+    tag_ru: "Шёлковый путь с высоты", tag_en: "The Silk Road from above",
+    body_ru: "Купола Регистана, пустыня Кызылкум и крепостные стены Хивы выглядят иначе с высоты птичьего полёта. Мы организуем вертолётные экскурсии и трансферы между городами маршрута для тех, кто ценит время и впечатления одинаково высоко.",
+    body_en: "The domes of Registan, the Kyzylkum desert and the fortress walls of Khiva look different from a bird's-eye view. We arrange helicopter excursions and inter-city transfers for those who value time and impressions equally.",
+    details_ru: "Панорамные облёты исторических городов\nМежгородские трансферы по воздуху\nИндивидуальные маршруты облёта\nКоординация с авиационными властями",
+    details_en: "Panoramic flights over historic cities\nInter-city transfers by air\nBespoke aerial routes\nCoordination with aviation authorities",
+  },
+  {
+    num: "05",
+    title_ru: "Частные самолёты", title_en: "Private Jets",
+    tag_ru: "От разрешений до посадки", tag_en: "From permits to landing",
+    body_ru: "Мы берём на себя всю организацию рейсов на частных самолётах: получение разрешений на полёт и посадку, координацию с аэропортами Узбекистана и подготовку наземного обслуживания к моменту приземления.",
+    body_en: "We take on the entire organisation of private jet flights: obtaining flight and landing permits, coordinating with Uzbekistan's airports and preparing ground handling for the moment of arrival.",
+    details_ru: "Получение разрешений на вход в воздушное пространство\nСлоты на посадку и стоянку воздушного судна\nНаземное обслуживание и топливо\nКоординация экипажа и расписания",
+    details_en: "Airspace entry permits\nLanding and parking slots\nGround handling and fuel\nCrew and schedule coordination",
+  },
+  {
+    num: "06",
+    title_ru: "Программы под запрос", title_en: "Bespoke Programmes",
+    tag_ru: "Маршрут вне каталога", tag_en: "Off-catalogue itineraries",
+    body_ru: "Когда стандартного маршрута недостаточно, мы организуем то, что в него обычно не входит: встречи с дизайнерами и художниками, визиты в частные мастерские и коллекции, закрытые экспозиции и события, подобранные под интересы конкретного гостя.",
+    body_en: "When a standard itinerary isn't enough, we arrange what usually isn't included: meetings with designers and artists, visits to private workshops and collections, closed exhibitions and events curated around a specific guest's interests.",
+    details_ru: "Встречи с дизайнерами и художниками\nВизиты в мастерские и частные коллекции\nДоступ к закрытым экспозициям\nИндивидуальные тематические программы",
+    details_en: "Meetings with designers and artists\nVisits to workshops and private collections\nAccess to closed exhibitions\nIndividual themed programmes",
+  },
+];
+
+function seedVipServices(db: Database.Database) {
+  const tx = db.transaction(() => {
+    const n = db.prepare("SELECT COUNT(*) AS n FROM vip_services").get() as { n: number };
+    if (n.n > 0) return;
+    const stmt = db.prepare(
+      `INSERT INTO vip_services
+        (position, num, title_ru, title_en, tag_ru, tag_en, body_ru, body_en, details_ru, details_en)
+       VALUES (@position, @num, @title_ru, @title_en, @tag_ru, @tag_en, @body_ru, @body_en, @details_ru, @details_en)`
+    );
+    VIP_SERVICES.forEach((s, i) => stmt.run({ ...s, position: i }));
+  });
+  tx.exclusive();
+}
+
+// --- VIP Services page text seed (idempotent; adds missing keys only) ---
+const VIP_SETTINGS: { key: string; ru: string; en: string }[] = [
+  { key: "vip_eyebrow", ru: "Услуги", en: "Services" },
+  { key: "vip_title1", ru: "Безупречность,", en: "Seamlessness," },
+  { key: "vip_title2", ru: "организованная заранее", en: "arranged in advance" },
+  { key: "vip_intro", ru: "Каждая деталь путешествия — от телефонного звонка до взлёта частного самолёта — продумана и подтверждена прежде, чем вы успеете о ней спросить.", en: "Every detail of the journey — from the first phone call to the take-off of a private jet — is thought through and confirmed before you even think to ask." },
+  { key: "vip_services_eyebrow", ru: "Что мы предлагаем", en: "What we offer" },
+  { key: "vip_services_title1", ru: "Шесть направлений,", en: "Six directions," },
+  { key: "vip_services_title2", ru: "один стандарт", en: "one standard" },
+  { key: "vip_services_intro", ru: "Мы не продаём отдельные услуги — мы выстраиваем вокруг гостя инфраструктуру, в которой не остаётся нерешённых вопросов.", en: "We don't sell isolated services — we build an infrastructure around the guest in which no question is left unresolved." },
+  { key: "vip_quote", ru: "Мы организуем то, что для обычного гостя остаётся за кадром — от разрешения на посадку до встречи с мастером, чьё имя знают немногие.", en: "We arrange what stays off-screen for the ordinary guest — from a landing permit to a meeting with a master whose name few know." },
+  { key: "vip_cta_title", ru: "Расскажите нам, что вам нужно — остальное мы возьмём на себя.", en: "Tell us what you need — we'll take care of the rest." },
+  { key: "vip_cta_button", ru: "Связаться с нами", en: "Get in touch" },
+];
+
+function seedVipSettings(db: Database.Database) {
+  const tx = db.transaction(() => {
+    const ins = db.prepare(
+      "INSERT OR IGNORE INTO settings (key, lang, value, grp) VALUES (?, ?, ?, 'vip')"
+    );
+    for (const s of VIP_SETTINGS) {
+      ins.run(s.key, "ru", s.ru);
+      ins.run(s.key, "en", s.en);
+    }
+  });
+  tx.exclusive();
+}
+
 
 // --- Itinerary seed (idempotent; runs even on a pre-existing DB) ---
 function seedItineraries(db: Database.Database) {
@@ -570,6 +679,21 @@ function initSchema(db: Database.Database) {
       body_ru TEXT NOT NULL DEFAULT '',
       body_en TEXT NOT NULL DEFAULT '',
       image TEXT NOT NULL DEFAULT ''
+    );
+    -- VIP service cards (numbered blocks on the VIP Services page).
+    -- Bilingual columns in a single row; details are newline-separated.
+    CREATE TABLE IF NOT EXISTS vip_services (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      position INTEGER NOT NULL DEFAULT 0,
+      num TEXT NOT NULL DEFAULT '',
+      title_ru TEXT NOT NULL DEFAULT '',
+      title_en TEXT NOT NULL DEFAULT '',
+      tag_ru TEXT NOT NULL DEFAULT '',
+      tag_en TEXT NOT NULL DEFAULT '',
+      body_ru TEXT NOT NULL DEFAULT '',
+      body_en TEXT NOT NULL DEFAULT '',
+      details_ru TEXT NOT NULL DEFAULT '',
+      details_en TEXT NOT NULL DEFAULT ''
     );
   `);
 }
