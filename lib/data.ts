@@ -130,7 +130,7 @@ const ru: SiteContent = {
     { label: "Направления", href: "/destinations" },
     { label: "О нас", href: "/about" },
     { label: "Документы", href: "/documents" },
-    { label: "Контакты", href: "#contact" },
+    { label: "Контакты", href: "/contact" },
     { label: "VIP услуги", href: "/vip-services" },
   ],
   contact: {
@@ -307,7 +307,7 @@ const en: SiteContent = {
     { label: "Destinations", href: "/destinations" },
     { label: "About", href: "/about" },
     { label: "Documents", href: "/documents" },
-    { label: "Contact", href: "#contact" },
+    { label: "Contact", href: "/contact" },
     { label: "VIP Services", href: "/vip-services" },
   ],
   contact: {
